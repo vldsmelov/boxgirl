@@ -1,0 +1,43 @@
+{
+  "name": "boxgirl",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build:rig-assets": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-point-rig-assets.ps1",
+    "build:summer-assets": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-point-rig-assets.ps1 -ManifestPath public\\assets\\avatar-v3-summer\\frames.manifest.json -RebuildRuntime",
+    "build:gym-assets": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-point-rig-assets.ps1 -ManifestPath public\\assets\\avatar-v4-gym\\frames.manifest.json -RebuildRuntime",
+    "qa:avatar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-avatar-assets.ps1",
+    "qa:summer-outfit": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-avatar-assets.ps1 -ManifestPath public\\assets\\avatar-v3-summer\\frames.manifest.json",
+    "qa:gym-outfit": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-avatar-assets.ps1 -ManifestPath public\\assets\\avatar-v4-gym\\frames.manifest.json",
+    "qa:outfit-switch": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-outfit-switch.ps1",
+    "qa:voices": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-voice-comparison.ps1",
+    "qa:silero-worker": "models\\silero\\.venv\\Scripts\\python.exe scripts/smoke_silero_worker.py --python models\\silero\\.venv\\Scripts\\python.exe --model models\\silero\\v5_5_ru.pt --worker scripts\\silero_worker.py",
+    "qa:release-tts": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-release-tts.ps1",
+    "qa:release-llm": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-release-llm.ps1",
+    "setup:silero": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-silero.ps1",
+    "setup:llm": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-llm.ps1",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.11.1",
+    "lucide-react": "1.34.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "@vitejs/plugin-react": "6.1.0",
+    "jsdom": "30.0.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  }
+}

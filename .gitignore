@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.vite/
+target/
+src-tauri/target/
+models/
+artifacts/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.log
+.DS_Store
+Thumbs.db
+public/live2d/Core/
+public/live2d/Resources/

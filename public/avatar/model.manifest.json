@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "id": "boxgirl",
+  "displayName": "BoxGirl",
+  "renderer": {
+    "preferred": "cubism-web",
+    "fallback": "point-rig-webgl-v1",
+    "model3": "/live2d/Resources/BoxGirl/BoxGirl.model3.json",
+    "fallbackImage": "/assets/avatar-v2/webp-rig/neutral.webp",
+    "poseImages": {
+      "neutral": "/assets/avatar-v2/webp/neutral.webp",
+      "blink": "/assets/avatar-v2/webp/blink.webp",
+      "joy": "/assets/avatar-v2/webp/joy.webp",
+      "joy_blink": "/assets/avatar-v2/webp/joy-blink.webp",
+      "listening": "/assets/avatar-v2/webp/listening.webp",
+      "listening_blink": "/assets/avatar-v2/webp/listening-blink.webp",
+      "thinking": "/assets/avatar-v2/webp/thinking.webp",
+      "thinking_blink": "/assets/avatar-v2/webp/thinking-blink.webp",
+      "nod_down": "/assets/avatar-v2/webp/nod-down.webp",
+      "shake_left": "/assets/avatar-v2/webp/shake-left.webp",
+      "shake_right": "/assets/avatar-v2/webp/shake-right.webp",
+      "wave": "/assets/avatar-v2/webp/wave.webp",
+      "explain_left": "/assets/avatar-v2/webp/explain-left.webp",
+      "explain_right": "/assets/avatar-v2/webp/explain-right.webp",
+      "celebrate": "/assets/avatar-v2/webp/celebrate.webp",
+      "concern": "/assets/avatar-v2/webp/concern.webp",
+      "concern_blink": "/assets/avatar-v2/webp/concern-blink.webp",
+      "confused": "/assets/avatar-v2/webp/confused.webp",
+      "confused_blink": "/assets/avatar-v2/webp/confused-blink.webp",
+      "surprise": "/assets/avatar-v2/webp/surprise.webp",
+      "surprise_blink": "/assets/avatar-v2/webp/surprise-blink.webp",
+      "sadness": "/assets/avatar-v2/webp/sadness.webp",
+      "sadness_blink": "/assets/avatar-v2/webp/sadness-blink.webp"
+    }
+  },
+  "parameters": {
+    "angleX": "ParamAngleX",
+    "angleY": "ParamAngleY",
+    "angleZ": "ParamAngleZ",
+    "bodyAngleX": "ParamBodyAngleX",
+    "bodyAngleY": "ParamBodyAngleY",
+    "bodyAngleZ": "ParamBodyAngleZ",
+    "eyeLOpen": "ParamEyeLOpen",
+    "eyeROpen": "ParamEyeROpen",
+    "eyeBallX": "ParamEyeBallX",
+    "eyeBallY": "ParamEyeBallY",
+    "mouthOpen": "ParamMouthOpenY",
+    "mouthForm": "ParamMouthForm",
+    "breath": "ParamBreath"
+  },
+  "expressions": {
+    "neutral": null,
+    "joy": "expressions/joy.exp3.json",
+    "sadness": "expressions/sadness.exp3.json",
+    "concern": "expressions/concern.exp3.json",
+    "surprise": "expressions/surprise.exp3.json",
+    "thinking": "expressions/thinking.exp3.json",
+    "confused": "expressions/confused.exp3.json"
+  },
+  "motions": {
+    "none": null,
+    "wave": { "file": "motions/wave.motion3.json", "durationMs": 1450, "fadeInMs": 240, "fadeOutMs": 260, "loop": false, "interruptible": true },
+    "nod": { "file": "motions/nod.motion3.json", "durationMs": 900, "fadeInMs": 170, "fadeOutMs": 220, "loop": false, "interruptible": true },
+    "shake_head": { "file": "motions/shake_head.motion3.json", "durationMs": 950, "fadeInMs": 150, "fadeOutMs": 210, "loop": false, "interruptible": true },
+    "explain_left": { "file": "motions/explain_left.motion3.json", "durationMs": 1700, "fadeInMs": 300, "fadeOutMs": 360, "loop": false, "interruptible": true },
+    "explain_right": { "file": "motions/explain_right.motion3.json", "durationMs": 1700, "fadeInMs": 300, "fadeOutMs": 360, "loop": false, "interruptible": true },
+    "shrug": { "file": "motions/shrug.motion3.json", "durationMs": 1350, "fadeInMs": 260, "fadeOutMs": 320, "loop": false, "interruptible": true },
+    "celebrate": { "file": "motions/celebrate.motion3.json", "durationMs": 1250, "fadeInMs": 190, "fadeOutMs": 330, "loop": false, "interruptible": true }
+  },
+  "proceduralRuntime": {
+    "parts": ["authoredTransparentFrame", "pointRigMesh"],
+    "pointRig": {
+      "mesh": [24, 36],
+      "controlPoints": ["head", "neck", "hairLeft", "hairRight", "shoulderLeft", "shoulderRight", "chest", "chestLeft", "chestRight", "waist", "elbowLeft", "elbowRight", "handLeft", "handRight", "cordLeft", "cordRight"],
+      "springFrequencyHz": { "range": [2.65, 6.1], "profile": "per-control-point-critical-damping" },
+      "edgePin": 0.075
+    },
+    "blinkIntervalMs": [2200, 5800],
+    "gazeIntervalMs": [3000, 7500],
+    "idleBeatIntervalMs": [6500, 13500],
+    "idleBeats": ["soft_nod", "shoulder_shift", "curious_tilt"],
+    "stateLoops": {
+      "idle": ["breath", "blink", "gaze", "secondary_physics", "idle_beats"],
+      "listening": ["focus_user", "listening_micro", "blink", "secondary_physics"],
+      "thinking": ["thinking_pose", "thinking_micro", "secondary_physics"],
+      "speaking": ["expression", "semantic_gesture", "blink", "gaze", "secondary_physics"],
+      "error": ["confused_expression", "lowered_arms", "downward_gaze"]
+    }
+  },
+  "lipSync": {
+    "preferred": "motion-sync",
+    "fallback": "audio-envelope",
+    "motionSync": "BoxGirl.motionsync3.json",
+    "smoothing": 55,
+    "gain": 1.15
+  }
+}

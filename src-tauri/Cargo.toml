@@ -1,0 +1,34 @@
+[package]
+name = "boxgirl"
+version = "0.1.0"
+description = "Local-first animated AI companion"
+authors = ["BoxGirl contributors"]
+edition = "2024"
+
+[lib]
+name = "boxgirl_lib"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "boxgirl"
+path = "src/main.rs"
+test = false
+bench = false
+
+[features]
+default = ["desktop"]
+desktop = ["dep:tauri"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+base64 = "0.22"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_System_JobObjects", "Win32_System_Threading"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = [], optional = true }
+uuid = { version = "1", features = ["v4"] }
