@@ -43,5 +43,23 @@
     "toggle": "отладка",
     "correctedBonk": "боньк",
     "legacyBonk": "боньк2"
+  },
+  "bonkFrames": {
+    "corrected": {
+      "frame": "private-playful",
+      "garment": "warm-peach-beige-two-piece-strapless-swimsuit"
+    },
+    "legacy": {
+      "frame": "private-playful-alt",
+      "garment": "original-base-swimsuit"
+    }
+  },
+  "qualityGates": {
+    "correctedBonkMidriffSample": {
+      "x": 512,
+      "y": 950,
+      "minimumRed": 0.95,
+      "minimumBlue": 0.75
+    }
   }
 }

@@ -83,8 +83,28 @@ foreach ($pair in @(
   }
 }
 
+if ($manifest.bonkFrames.corrected.frame -ne "private-playful" -or
+    $manifest.bonkFrames.corrected.garment -ne "warm-peach-beige-two-piece-strapless-swimsuit") {
+  $failures.Add("Corrected bonk must be pinned to the approved two-piece strapless swimsuit")
+}
+
+$sample = $manifest.qualityGates.correctedBonkMidriffSample
+if ($sample) {
+  $sampleRed = [double]::Parse(
+    [string](& magick $primaryMaster -format "%[fx:p{$($sample.x),$($sample.y)}.r]" info:),
+    [Globalization.CultureInfo]::InvariantCulture
+  )
+  $sampleBlue = [double]::Parse(
+    [string](& magick $primaryMaster -format "%[fx:p{$($sample.x),$($sample.y)}.b]" info:),
+    [Globalization.CultureInfo]::InvariantCulture
+  )
+  if ($sampleRed -lt [double]$sample.minimumRed -or $sampleBlue -lt [double]$sample.minimumBlue) {
+    $failures.Add("Corrected bonk midriff sample does not expose the approved swimsuit gap")
+  }
+}
+
 Write-Host "Base mannequin: $($frameIds.Count) semantic frames ($($runtimeFiles.Count) runtime, $($rigFiles.Count) point-rig)."
-Write-Host "Corrected bonk: private-playful; legacy command bonk2: private-playful-alt."
+Write-Host "Corrected bonk: private-playful in the approved two-piece swimsuit; legacy command bonk2: private-playful-alt."
 
 if ($failures.Count -gt 0) {
   $failures | ForEach-Object { Write-Host "ERROR: $_" -ForegroundColor Red }
