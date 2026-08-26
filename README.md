@@ -6,7 +6,7 @@
 
 ## Что уже работает
 
-- оригинальный визуальный образ BoxGirl, единый тёмный studio-stage и три полных outfit-набора: уютная худи, летняя майка и спортивная форма;
+- оригинальный визуальный образ BoxGirl, единый тёмный studio-stage и четыре полных outfit-набора: уютная худи, летняя майка, спортивная форма и вечернее платье;
 - состояния `idle`, `listening`, `thinking`, `speaking`, `error`;
 - whitelisted-контракт `AssistantTurnV1`;
 - локальная Qwen3.5-4B Q4_K_M с CUDA-offload, строгим JSON Schema контрактом и безопасным mocked-fallback;
@@ -21,7 +21,7 @@
 - диагностическая панель с FPS и текущим performance-state;
 - semantic frame manifest и manifest для будущей Cubism-модели;
 - автоматический asset-QA: размер, полнота, прозрачность cutout-набора и качество WebP относительно PNG-мастеров.
-- локальные команды `жарко`, `холодно` и `тренировка`: мягко переключают outfit, не вызывают LLM и сохраняют выбор между запусками.
+- локальные команды `жарко`, `холодно`, `тренировка` и `вечер`: мягко переключают outfit, не вызывают LLM и сохраняют выбор между запусками.
 
 Крупные веса LLM/ASR/TTS и Cubism `.moc3/.model3.json` не хранятся в репозитории. Проверяемые setup-скрипты устанавливают Qwen и Silero локально в игнорируемый каталог `models`; при отсутствии весов интерфейс остаётся рабочим через безопасные fallback-провайдеры.
 
@@ -47,9 +47,11 @@ npm test
 npm run build:rig-assets
 npm run build:summer-assets
 npm run build:gym-assets
+npm run build:evening-assets
 npm run qa:avatar
 npm run qa:summer-outfit
 npm run qa:gym-outfit
+npm run qa:evening-outfit
 npm run qa:outfit-switch
 npm run qa:release-llm
 npm run qa:release-tts
@@ -82,7 +84,7 @@ cargo check
 
 Инструкции по PSD, ригу, параметрам и экспорту находятся в [docs/LIVE2D_ASSET_GUIDE.md](docs/LIVE2D_ASSET_GUIDE.md). Семантическое отображение эмоций и жестов находится в [public/avatar/model.manifest.json](public/avatar/model.manifest.json).
 
-До подключения официального Cubism Core интерфейс деформирует прозрачные WebP-cutout кадры через локальный WebGL point-rig. Худди-набор описан в [avatar-v2](public/assets/avatar-v2/frames.manifest.json), летний — в [avatar-v3-summer](public/assets/avatar-v3-summer/frames.manifest.json), спортивный — в [avatar-v4-gym](public/assets/avatar-v4-gym/frames.manifest.json). PNG-мастера лежат вне runtime в соответствующих каталогах `art/boxgirl-*`. Core и модель нужно разместить локально по инструкции [public/live2d/README.md](public/live2d/README.md).
+До подключения официального Cubism Core интерфейс деформирует прозрачные WebP-cutout кадры через локальный WebGL point-rig. Худди-набор описан в [avatar-v2](public/assets/avatar-v2/frames.manifest.json), летний — в [avatar-v3-summer](public/assets/avatar-v3-summer/frames.manifest.json), спортивный — в [avatar-v4-gym](public/assets/avatar-v4-gym/frames.manifest.json), вечерний — в [avatar-v5-evening](public/assets/avatar-v5-evening/frames.manifest.json). PNG-мастера лежат вне runtime в соответствующих каталогах `art/boxgirl-*`. Core и модель нужно разместить локально по инструкции [public/live2d/README.md](public/live2d/README.md).
 
 ## Архитектура
 
@@ -106,6 +108,7 @@ performance director in App
 
 - [Character bible](docs/CHARACTER_BIBLE.md)
 - [Image generation prompts V2](docs/IMAGEGEN_PROMPTS_V2.md)
+- [Evening outfit prompts](docs/IMAGEGEN_PROMPTS_EVENING.md)
 - [Runtime animation](docs/RUNTIME_ANIMATION.md)
 - [Live2D asset guide](docs/LIVE2D_ASSET_GUIDE.md)
 - [Local LLM](docs/local-llm.md)

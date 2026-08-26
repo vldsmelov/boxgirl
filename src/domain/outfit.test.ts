@@ -14,7 +14,11 @@ describe("local outfit commands", () => {
     expect(resolveOutfitCommand(value)).toBe("gym");
   });
 
-  it.each(["мне жарко", "очень холодно", "план тренировки", "тренировка?", "жарковато", "жарко?", ""])("does not intercept normal chat text %s", (value) => {
+  it.each(["вечер", " ВЕЧЕР ", "Вечер!", "вечер."])("selects the evening outfit for %s", (value) => {
+    expect(resolveOutfitCommand(value)).toBe("evening");
+  });
+
+  it.each(["мне жарко", "очень холодно", "план тренировки", "добрый вечер", "вечером", "вечер?", "тренировка?", "жарковато", "жарко?", ""])("does not intercept normal chat text %s", (value) => {
     expect(resolveOutfitCommand(value)).toBeNull();
   });
 
@@ -25,6 +29,8 @@ describe("local outfit commands", () => {
     expect(loadOutfitPreference()).toBe("summer");
     saveOutfitPreference("gym");
     expect(loadOutfitPreference()).toBe("gym");
+    saveOutfitPreference("evening");
+    expect(loadOutfitPreference()).toBe("evening");
     saveOutfitPreference("hoodie");
     expect(loadOutfitPreference()).toBe("hoodie");
   });

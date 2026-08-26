@@ -7,13 +7,14 @@ export function resolveOutfitCommand(value: string): AvatarOutfitId | null {
   if (/^жарко[!.]?$/iu.test(command)) return "summer";
   if (/^холодно[!.]?$/iu.test(command)) return "hoodie";
   if (/^тренировка[!.]?$/iu.test(command)) return "gym";
+  if (/^вечер[!.]?$/iu.test(command)) return "evening";
   return null;
 }
 
 export function loadOutfitPreference(): AvatarOutfitId {
   try {
     const stored = globalThis.localStorage?.getItem(OUTFIT_STORAGE_KEY);
-    return stored === "summer" || stored === "gym" ? stored : "hoodie";
+    return stored === "summer" || stored === "gym" || stored === "evening" ? stored : "hoodie";
   } catch {
     return "hoodie";
   }

@@ -64,6 +64,7 @@ const previewOutfitValue = previewParameters.get("outfit");
 const previewOutfit: AvatarOutfitId | null = previewOutfitValue === "hoodie"
   || previewOutfitValue === "summer"
   || previewOutfitValue === "gym"
+  || previewOutfitValue === "evening"
   ? previewOutfitValue
   : null;
 
@@ -278,7 +279,11 @@ export default function App() {
     stopCurrentTurn("speaking");
     const changed = baseDebugVisible || outfit !== nextOutfit;
     const now = Date.now();
-    const reply = nextOutfit === "summer"
+    const reply = nextOutfit === "evening"
+      ? changed
+        ? "Вечерний образ готов. Изумрудный атлас, высокая укладка — можно выходить ✨"
+        : "Я уже в вечернем образе — украшения и укладка на месте ✨"
+      : nextOutfit === "summer"
       ? changed
         ? "Фух, так гораздо легче. Переоделась в летнюю майку с кроликом 🐰"
         : "Я уже в летнем образе — кролик на месте 🐰"

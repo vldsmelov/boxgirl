@@ -128,8 +128,36 @@ await waitFor(`document.querySelector('.debug-panel') === null`, 1_000, "closed 
 const gymScreenshot = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
 await writeFile(new URL("gym-outfit.png", outputDir), Buffer.from(gymScreenshot.data, "base64"));
 
+await submit("вечер");
+await waitFor(`document.querySelector('.point-rig-renderer')?.dataset.currentOutfit === 'evening'`, 3_000, "evening outfit");
+const eveningTransition = await evaluate(`(() => {
+  const renderer = document.querySelector('.point-rig-renderer');
+  return {
+    currentOutfit: renderer?.dataset.currentOutfit,
+    previousOutfit: renderer?.dataset.previousOutfit,
+    durationMs: Number(renderer?.dataset.transitionDuration),
+  };
+})()`);
+await new Promise((resolve) => setTimeout(resolve, 850));
+await evaluate(`document.querySelector('button[aria-label="Диагностика"]')?.click()`);
+await waitFor(`document.querySelector('.debug-panel') !== null`, 1_000, "open diagnostics panel for evening");
+const evening = await evaluate(`(() => ({
+  outfit: document.querySelector('[data-testid="avatar"]')?.dataset.outfit,
+  rendererOutfit: document.querySelector('.point-rig-renderer')?.dataset.currentOutfit,
+  storedOutfit: localStorage.getItem('boxgirl.avatar-outfit.v1'),
+  assistantText: [...document.querySelectorAll('.message-assistant p')].at(-1)?.textContent?.trim(),
+  renderer: document.querySelector('.point-rig-renderer')?.dataset.renderer,
+  fps: [...document.querySelectorAll('.debug-panel dt')].find((item) => item.textContent === 'render')?.parentElement?.querySelector('dd')?.textContent,
+  textureCount: Number(document.querySelector('.point-rig-renderer')?.dataset.textureCount),
+  residentOutfit: document.querySelector('.point-rig-renderer')?.dataset.residentOutfit,
+}))()`);
+await evaluate(`document.querySelector('button[aria-label="Диагностика"]')?.click()`);
+await waitFor(`document.querySelector('.debug-panel') === null`, 1_000, "closed diagnostics panel after evening");
+const eveningScreenshot = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+await writeFile(new URL("evening-outfit.png", outputDir), Buffer.from(eveningScreenshot.data, "base64"));
+
 await submit("боньк");
-await waitFor(`document.querySelector('[data-testid="avatar"]')?.dataset.frame === 'private-playful'`, 3_000, "gym bonk pose");
+await waitFor(`document.querySelector('[data-testid="avatar"]')?.dataset.frame === 'private-playful'`, 3_000, "evening bonk pose");
 const bonkOutfit = await evaluate(`document.querySelector('[data-testid="avatar"]')?.dataset.outfit`);
 
 await submit("холодно");
@@ -161,12 +189,24 @@ const valid = transition.currentOutfit === "summer"
   && gym.textureCount > 0
   && gym.textureCount <= 4
   && gym.residentOutfit === "gym"
-  && bonkOutfit === "gym"
+  && eveningTransition.currentOutfit === "evening"
+  && eveningTransition.previousOutfit === "gym"
+  && eveningTransition.durationMs === 640
+  && evening.outfit === "evening"
+  && evening.rendererOutfit === "evening"
+  && evening.storedOutfit === "evening"
+  && evening.assistantText?.includes("Вечерний")
+  && evening.renderer === "point-rig-webgl"
+  && Number.parseInt(evening.fps, 10) >= 55
+  && evening.textureCount > 0
+  && evening.textureCount <= 4
+  && evening.residentOutfit === "evening"
+  && bonkOutfit === "evening"
   && cold.outfit === "hoodie"
   && cold.storedOutfit === "hoodie"
   && cold.assistantText?.includes("худи");
 
-const result = { valid, transition, summer, gymTransition, gym, bonkOutfit, cold };
+const result = { valid, transition, summer, gymTransition, gym, eveningTransition, evening, bonkOutfit, cold };
 await writeFile(new URL("results.json", outputDir), JSON.stringify(result, null, 2), "utf8");
 console.log(JSON.stringify(result, null, 2));
 socket.close();

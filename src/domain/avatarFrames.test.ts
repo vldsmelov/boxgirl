@@ -39,12 +39,14 @@ describe("curated avatar frame resolver", () => {
   });
 
   it("uses independent full-frame outfit sets including the authored bonk pose", () => {
-    expect(AVATAR_OUTFIT_IDS).toEqual(["hoodie", "summer", "gym"]);
-    expect(AVATAR_PRESENTATION_IDS).toEqual(["hoodie", "summer", "gym", "base-debug"]);
+    expect(AVATAR_OUTFIT_IDS).toEqual(["hoodie", "summer", "gym", "evening"]);
+    expect(AVATAR_PRESENTATION_IDS).toEqual(["hoodie", "summer", "gym", "evening", "base-debug"]);
     expect(getAvatarFrameSource("hoodie", "neutral")).toBe("/assets/avatar-v2/webp/neutral.webp");
     expect(getAvatarFrameSource("summer", "wave")).toBe("/assets/avatar-v3-summer/webp/wave.webp");
     expect(getAvatarRigFrameSource("gym", "private-playful"))
       .toBe("/assets/avatar-v4-gym/webp-rig/private-playful.webp");
+    expect(getAvatarRigFrameSource("evening", "wave"))
+      .toBe("/assets/avatar-v5-evening/webp-rig/wave.webp");
     expect(getAvatarRigFrameSource("base-debug", "private-playful"))
       .toBe("/assets/avatar-layered-v1/base-debug/webp-rig/private-playful.webp");
     expect(getAvatarRigFrameSource("base-debug", "private-playful-alt"))

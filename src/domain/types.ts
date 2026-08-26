@@ -25,7 +25,7 @@ export type EmotionId = (typeof EMOTION_IDS)[number];
 export type GestureId = (typeof GESTURE_IDS)[number];
 export type VoiceStyle = (typeof VOICE_STYLES)[number];
 export type AvatarState = "idle" | "listening" | "thinking" | "speaking" | "error";
-export type AvatarOutfitId = "hoodie" | "summer" | "gym";
+export type AvatarOutfitId = "hoodie" | "summer" | "gym" | "evening";
 export type AvatarPresentationId = AvatarOutfitId | "base-debug";
 
 export interface PerformanceSegment {

@@ -73,6 +73,16 @@ foreach ($property in $manifest.frames.PSObject.Properties) {
   if ($rigCenterAlpha -lt 0.98) {
     $failures.Add("$frameId point-rig foreground center is unexpectedly transparent")
   }
+  if ($manifest.qualityGates.PSObject.Properties.Name -contains "opaqueProbe") {
+    $opaqueProbe = $manifest.qualityGates.opaqueProbe
+    $probeMeanAlpha = [double]::Parse(
+      [string](& magick $rigPath -crop $opaqueProbe.geometry +repage -channel A -separate +channel -format "%[fx:mean]" info:),
+      [Globalization.CultureInfo]::InvariantCulture
+    )
+    if ($probeMeanAlpha -lt [double]$opaqueProbe.minimumMeanAlpha) {
+      $failures.Add("$frameId point-rig opaque probe mean alpha is $([math]::Round($probeMeanAlpha, 4)); expected >= $($opaqueProbe.minimumMeanAlpha)")
+    }
+  }
 
   $rows += [PSCustomObject]@{
     Frame = $frameId

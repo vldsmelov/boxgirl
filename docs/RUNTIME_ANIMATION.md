@@ -75,7 +75,7 @@ Animation lab открывается кнопкой с иконкой жука �
 
 ## Контроль качества
 
-`npm run qa:avatar`, `qa:summer-outfit` и `qa:gym-outfit` проверяют manifest, PNG-мастера, runtime/point-rig WebP, размер 1024×1536, прозрачность и PSNR не ниже 42 dB. `npm run qa:outfit-switch` проверяет все три outfit, переход 640 мс, persistence и приватную анимацию в спортивной форме. Математика сетки, пружин, безопасных лимитов и временных ключей покрыта unit-тестами.
+`npm run qa:avatar`, `qa:summer-outfit`, `qa:gym-outfit` и `qa:evening-outfit` проверяют manifest, PNG-мастера, runtime/point-rig WebP, размер 1024×1536, прозрачность и PSNR не ниже 42 dB. `npm run qa:outfit-switch` проверяет все четыре outfit, переход 640 мс, persistence и приватную анимацию в вечернем образе. Математика сетки, пружин, безопасных лимитов и временных ключей покрыта unit-тестами.
 
 ## Переход на Live2D
 
