@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "characterId": "boxgirl",
+  "renderer": "point-rig-webgl-v1",
+  "canvas": { "width": 1024, "height": 1536 },
+  "backgroundColor": "#1b171d",
+  "baseMasterDirectory": "../boxgirl-base-v1/masters",
+  "outfitLayerRoot": "../boxgirl-outfits-v1",
+  "outputRoot": "../../public/assets/avatar-layered-v1",
+  "safeFallback": { "presentation": "hoodie", "frame": "neutral" },
+  "semanticFrames": [
+    "neutral", "blink", "joy", "joy-blink", "listening", "listening-blink",
+    "thinking", "thinking-blink", "private-playful", "nod-down", "shake-left",
+    "shake-right", "wave", "explain-left", "explain-right", "celebrate",
+    "concern", "concern-blink", "confused", "confused-blink", "surprise",
+    "surprise-blink", "sadness", "sadness-blink"
+  ],
+  "poseMap": {
+    "neutral": "neutral", "blink": "neutral",
+    "joy": "joy", "joy-blink": "joy",
+    "listening": "listening", "listening-blink": "listening",
+    "thinking": "thinking", "thinking-blink": "thinking",
+    "concern": "concern", "concern-blink": "concern",
+    "confused": "confused", "confused-blink": "confused",
+    "surprise": "surprise", "surprise-blink": "surprise",
+    "sadness": "sadness", "sadness-blink": "sadness",
+    "private-playful": "private-playful",
+    "nod-down": "nod-down",
+    "shake-left": "shake-left",
+    "shake-right": "shake-right",
+    "wave": "wave",
+    "explain-left": "explain-left",
+    "explain-right": "explain-right",
+    "celebrate": "celebrate"
+  },
+  "baseAliases": {
+    "private-playful": "joy",
+    "nod-down": "neutral",
+    "concern-blink": "concern",
+    "confused-blink": "confused",
+    "surprise-blink": "surprise",
+    "sadness-blink": "sadness"
+  },
+  "presentations": {
+    "base-debug": { "mode": "base" },
+    "hoodie": { "mode": "layered", "source": "../../public/assets/avatar-v2" },
+    "summer": { "mode": "layered", "source": "../../public/assets/avatar-v3-summer" },
+    "gym": { "mode": "layered", "source": "../../public/assets/avatar-v4-gym" }
+  },
+  "qualityGates": {
+    "runtimeWebpQuality": 94,
+    "protectedFrontRegion": { "x": 0, "y": 0, "width": 1024, "height": 500 },
+    "requiredPoseCount": 16,
+    "requiredFrameCount": 24
+  }
+}

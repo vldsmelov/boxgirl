@@ -11,9 +11,10 @@ import {
 } from "lucide-react";
 import { AvatarStage } from "./components/AvatarStage";
 import { GESTURE_TIMINGS } from "./domain/avatarPointRig";
+import { isBaseDebugCommand } from "./domain/baseDebug";
 import { loadOutfitPreference, resolveOutfitCommand, saveOutfitPreference } from "./domain/outfit";
 import { isPrivateEasterEggCommand, PRIVATE_EASTER_EGG_DURATION_MS } from "./domain/privateEasterEgg";
-import type { AvatarOutfitId, AvatarState, ChatMessage, EmotionId, GestureId } from "./domain/types";
+import type { AvatarOutfitId, AvatarPresentationId, AvatarState, ChatMessage, EmotionId, GestureId } from "./domain/types";
 import { safeFallbackTurn } from "./domain/types";
 import { useFps } from "./hooks/useFps";
 import {
@@ -79,6 +80,8 @@ export default function App() {
   const [input, setInput] = useState("");
   const [avatarState, setAvatarState] = useState<AvatarState>(initialPreview?.state ?? "idle");
   const [outfit, setOutfit] = useState<AvatarOutfitId>(() => previewOutfit ?? loadOutfitPreference());
+  const [baseDebugVisible, setBaseDebugVisible] = useState(false);
+  const presentation: AvatarPresentationId = baseDebugVisible ? "base-debug" : outfit;
   const [emotion, setEmotion] = useState<EmotionId>(initialPreview?.emotion ?? "neutral");
   const [emotionIntensity, setEmotionIntensity] = useState(initialPreview ? 0.72 : 0.35);
   const [gesture, setGesture] = useState<GestureId>(initialPreview?.gesture ?? "none");
@@ -257,7 +260,7 @@ export default function App() {
 
   const triggerOutfitCommand = (text: string, nextOutfit: AvatarOutfitId) => {
     stopCurrentTurn("speaking");
-    const changed = outfit !== nextOutfit;
+    const changed = baseDebugVisible || outfit !== nextOutfit;
     const now = Date.now();
     const reply = nextOutfit === "summer"
       ? changed
@@ -276,12 +279,33 @@ export default function App() {
       { id: makeId(), role: "assistant", text: reply, createdAt: now + 1 },
     ]);
     setInput("");
+    setBaseDebugVisible(false);
     setOutfit(nextOutfit);
     saveOutfitPreference(nextOutfit);
     setEmotion("joy");
     setEmotionIntensity(0.58);
     startGesture("nod");
     previewTimer.current = window.setTimeout(() => stopCurrentTurn(), 1_650);
+  };
+
+  const triggerBaseDebugCommand = (text: string) => {
+    stopCurrentTurn();
+    const nextVisible = !baseDebugVisible;
+    const now = Date.now();
+    setMessages((current) => [
+      ...current,
+      { id: makeId(), role: "user", text, createdAt: now },
+      {
+        id: makeId(),
+        role: "assistant",
+        text: nextVisible
+          ? "Отладочный режим базовой модели включён. Все эмоции и движения доступны."
+          : "Отладочный режим базовой модели выключен. Вернула предыдущий наряд.",
+        createdAt: now + 1,
+      },
+    ]);
+    setInput("");
+    setBaseDebugVisible(nextVisible);
   };
 
   const runTurn = async (rawInput: string) => {
@@ -365,6 +389,10 @@ export default function App() {
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (isBaseDebugCommand(input)) {
+      triggerBaseDebugCommand(input.trim());
+      return;
+    }
     const outfitCommand = resolveOutfitCommand(input);
     if (outfitCommand) {
       triggerOutfitCommand(input.trim(), outfitCommand);
@@ -441,7 +469,7 @@ export default function App() {
       <div className="workspace">
         <AvatarStage
           state={avatarState}
-          outfit={outfit}
+          presentation={presentation}
           emotion={emotion}
           emotionIntensity={emotionIntensity}
           gesture={gesture}
@@ -528,6 +556,7 @@ export default function App() {
             <div><dt>render</dt><dd>{fps} FPS</dd></div>
             <div><dt>avatar</dt><dd>{avatarRenderer}</dd></div>
             <div><dt>outfit</dt><dd>{outfit}</dd></div>
+            <div><dt>presentation</dt><dd>{presentation}</dd></div>
             <div><dt>ASR</dt><dd>{voiceMode}</dd></div>
             <div><dt>TTS</dt><dd>{voiceProfile}</dd></div>
             <div>

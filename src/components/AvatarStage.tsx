@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { Activity, AudioLines, BrainCircuit, Ear, Sparkles } from "lucide-react";
 import { resolveAvatarFrame, resolveBlinkFrame, type AvatarFrameId } from "../domain/avatarFrames";
-import type { AvatarOutfitId, AvatarState, EmotionId, GestureId } from "../domain/types";
+import type { AvatarPresentationId, AvatarState, EmotionId, GestureId } from "../domain/types";
 import { useLivingAvatar } from "../hooks/useLivingAvatar";
 import { PointRigCanvas, type AvatarRendererMode } from "./PointRigCanvas";
 import { AUTHORED_HEAD_FRAME_TIMELINES } from "../domain/avatarPointRig";
@@ -13,7 +13,7 @@ import {
 
 interface AvatarStageProps {
   state: AvatarState;
-  outfit: AvatarOutfitId;
+  presentation: AvatarPresentationId;
   emotion: EmotionId;
   emotionIntensity: number;
   gesture: GestureId;
@@ -52,8 +52,8 @@ const StateIcon = ({ state }: { state: AvatarState }) => {
 };
 
 interface FrameTransition {
-  current: { frame: AvatarFrameId; outfit: AvatarOutfitId };
-  previous: { frame: AvatarFrameId; outfit: AvatarOutfitId } | null;
+  current: { frame: AvatarFrameId; presentation: AvatarPresentationId };
+  previous: { frame: AvatarFrameId; presentation: AvatarPresentationId } | null;
   revision: number;
   kind: FrameTransitionKind;
   durationMs: number;
@@ -83,12 +83,12 @@ function useAuthoredHeadMotion(baseFrame: AvatarFrameId, state: AvatarState, ges
 const OUTFIT_TRANSITION_MS = 640;
 
 const sameVisualFrame = (
-  first: { frame: AvatarFrameId; outfit: AvatarOutfitId },
-  second: { frame: AvatarFrameId; outfit: AvatarOutfitId },
-) => first.frame === second.frame && first.outfit === second.outfit;
+  first: { frame: AvatarFrameId; presentation: AvatarPresentationId },
+  second: { frame: AvatarFrameId; presentation: AvatarPresentationId },
+) => first.frame === second.frame && first.presentation === second.presentation;
 
-function useFrameTransition(targetFrame: AvatarFrameId, targetOutfit: AvatarOutfitId): FrameTransition {
-  const initial = { frame: targetFrame, outfit: targetOutfit };
+function useFrameTransition(targetFrame: AvatarFrameId, targetPresentation: AvatarPresentationId): FrameTransition {
+  const initial = { frame: targetFrame, presentation: targetPresentation };
   const currentRef = useRef(initial);
   const pendingRef = useRef<typeof initial | null>(null);
   const clearTimerRef = useRef<number | null>(null);
@@ -105,7 +105,7 @@ function useFrameTransition(targetFrame: AvatarFrameId, targetOutfit: AvatarOutf
   const startTransition = useCallback(function beginFrameTransition(next: typeof initial) {
     if (sameVisualFrame(next, currentRef.current)) return;
     const previous = currentRef.current;
-    const outfitChanged = previous.outfit !== next.outfit;
+    const outfitChanged = previous.presentation !== next.presentation;
     const kind = outfitChanged ? "pose" : getFrameTransitionKind(previous.frame, next.frame);
     const durationMs = outfitChanged
       ? OUTFIT_TRANSITION_MS
@@ -126,13 +126,13 @@ function useFrameTransition(targetFrame: AvatarFrameId, targetOutfit: AvatarOutf
   }, []);
 
   useEffect(() => {
-    const target = { frame: targetFrame, outfit: targetOutfit };
+    const target = { frame: targetFrame, presentation: targetPresentation };
     if (sameVisualFrame(target, currentRef.current)) {
       pendingRef.current = null;
       return;
     }
 
-    const nextKind = currentRef.current.outfit !== target.outfit
+    const nextKind = currentRef.current.presentation !== target.presentation
       ? "pose"
       : getFrameTransitionKind(currentRef.current.frame, target.frame);
     if (performance.now() < activeUntilRef.current && activeKindRef.current !== "blink") {
@@ -141,7 +141,7 @@ function useFrameTransition(targetFrame: AvatarFrameId, targetOutfit: AvatarOutf
       return;
     }
     startTransition(target);
-  }, [startTransition, targetFrame, targetOutfit]);
+  }, [startTransition, targetFrame, targetPresentation]);
 
   useEffect(() => () => {
     if (clearTimerRef.current !== null) window.clearTimeout(clearTimerRef.current);
@@ -150,13 +150,13 @@ function useFrameTransition(targetFrame: AvatarFrameId, targetOutfit: AvatarOutf
   return transition;
 }
 
-export function AvatarStage({ state, outfit, emotion, emotionIntensity, gesture, gestureRevision, easterEggActive, easterEggRevision, lipLevel, partialTranscript, onRendererChange }: AvatarStageProps) {
+export function AvatarStage({ state, presentation, emotion, emotionIntensity, gesture, gestureRevision, easterEggActive, easterEggRevision, lipLevel, partialTranscript, onRendererChange }: AvatarStageProps) {
   const living = useLivingAvatar(state, gesture);
   const baseFrame: AvatarFrameId = easterEggActive ? "private-playful" : resolveAvatarFrame(state, emotion, gesture);
   const semanticFrame = useAuthoredHeadMotion(baseFrame, state, gesture, gestureRevision);
   const blinkFrame = resolveBlinkFrame(semanticFrame, state);
   const targetFrame = living.blink && blinkFrame ? blinkFrame : semanticFrame;
-  const frame = useFrameTransition(targetFrame, outfit);
+  const frame = useFrameTransition(targetFrame, presentation);
   const style = {
     "--lip-level": lipLevel.toFixed(3),
     "--emotion-intensity": emotionIntensity.toFixed(3),
@@ -181,7 +181,8 @@ export function AvatarStage({ state, outfit, emotion, emotionIntensity, gesture,
         style={style}
         data-testid="avatar"
         data-frame={semanticFrame}
-        data-outfit={outfit}
+        data-outfit={presentation}
+        data-presentation={presentation}
         data-motion={living.motion}
       >
         <div className="aura" />
@@ -189,9 +190,9 @@ export function AvatarStage({ state, outfit, emotion, emotionIntensity, gesture,
         <div className="avatar-frame-stack" aria-hidden="true">
           <PointRigCanvas
             currentFrame={frame.current.frame}
-            currentOutfit={frame.current.outfit}
+            currentOutfit={frame.current.presentation}
             previousFrame={frame.previous?.frame ?? null}
-            previousOutfit={frame.previous?.outfit ?? null}
+            previousOutfit={frame.previous?.presentation ?? null}
             transitionDurationMs={frame.durationMs}
             transitionRevision={frame.revision}
             state={state}

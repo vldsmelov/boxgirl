@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { canUseBlinkFrame, resolveAvatarFrame, resolveBlinkFrame } from "./avatarFrames";
+import {
+  AVATAR_PRESENTATION_IDS,
+  AVATAR_OUTFIT_IDS,
+  canUseBlinkFrame,
+  getAvatarFrameSource,
+  getAvatarRigFrameSource,
+  resolveAvatarFrame,
+  resolveBlinkFrame,
+} from "./avatarFrames";
 
 describe("curated avatar frame resolver", () => {
   it("prioritizes hard states over stale model gestures", () => {
@@ -28,5 +36,14 @@ describe("curated avatar frame resolver", () => {
     expect(resolveBlinkFrame("confused", "error")).toBe("confused-blink");
     expect(canUseBlinkFrame("concern", "speaking")).toBe(true);
     expect(canUseBlinkFrame("wave", "speaking")).toBe(false);
+  });
+
+  it("keeps base-debug renderable but outside the public outfit whitelist", () => {
+    expect(AVATAR_PRESENTATION_IDS).toContain("base-debug");
+    expect(AVATAR_OUTFIT_IDS).not.toContain("base-debug");
+    expect(getAvatarFrameSource("base-debug", "neutral"))
+      .toBe("/assets/avatar-layered-v1/base-debug/webp/neutral.webp");
+    expect(getAvatarRigFrameSource("hoodie", "wave"))
+      .toBe("/assets/avatar-layered-v1/hoodie/webp-rig/wave.webp");
   });
 });

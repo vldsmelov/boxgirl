@@ -1,0 +1,770 @@
+﻿[
+    {
+        "presentation":  "base-debug",
+        "frame":  "neutral",
+        "pose":  "neutral",
+        "sourceMode":  "base",
+        "runtimeBytes":  144104,
+        "rigBytes":  147864
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "blink",
+        "pose":  "neutral",
+        "sourceMode":  "base",
+        "runtimeBytes":  152946,
+        "rigBytes":  157152
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "joy",
+        "pose":  "joy",
+        "sourceMode":  "base",
+        "runtimeBytes":  172038,
+        "rigBytes":  175730
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "joy-blink",
+        "pose":  "joy",
+        "sourceMode":  "base",
+        "runtimeBytes":  159108,
+        "rigBytes":  162956
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "listening",
+        "pose":  "listening",
+        "sourceMode":  "base",
+        "runtimeBytes":  173240,
+        "rigBytes":  176882
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "listening-blink",
+        "pose":  "listening",
+        "sourceMode":  "base",
+        "runtimeBytes":  166914,
+        "rigBytes":  170614
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "thinking",
+        "pose":  "thinking",
+        "sourceMode":  "base",
+        "runtimeBytes":  152406,
+        "rigBytes":  156292
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "thinking-blink",
+        "pose":  "thinking",
+        "sourceMode":  "base",
+        "runtimeBytes":  160844,
+        "rigBytes":  164800
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "private-playful",
+        "pose":  "private-playful",
+        "sourceMode":  "semantic-alias:joy",
+        "runtimeBytes":  172038,
+        "rigBytes":  175730
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "nod-down",
+        "pose":  "nod-down",
+        "sourceMode":  "semantic-alias:neutral",
+        "runtimeBytes":  144104,
+        "rigBytes":  147864
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "shake-left",
+        "pose":  "shake-left",
+        "sourceMode":  "base",
+        "runtimeBytes":  145606,
+        "rigBytes":  149288
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "shake-right",
+        "pose":  "shake-right",
+        "sourceMode":  "base",
+        "runtimeBytes":  141216,
+        "rigBytes":  145048
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "wave",
+        "pose":  "wave",
+        "sourceMode":  "base",
+        "runtimeBytes":  157568,
+        "rigBytes":  162540
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "explain-left",
+        "pose":  "explain-left",
+        "sourceMode":  "base",
+        "runtimeBytes":  162262,
+        "rigBytes":  166920
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "explain-right",
+        "pose":  "explain-right",
+        "sourceMode":  "base",
+        "runtimeBytes":  153554,
+        "rigBytes":  158226
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "celebrate",
+        "pose":  "celebrate",
+        "sourceMode":  "base",
+        "runtimeBytes":  157764,
+        "rigBytes":  163340
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "concern",
+        "pose":  "concern",
+        "sourceMode":  "base",
+        "runtimeBytes":  159608,
+        "rigBytes":  163252
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "concern-blink",
+        "pose":  "concern",
+        "sourceMode":  "semantic-alias:concern",
+        "runtimeBytes":  159608,
+        "rigBytes":  163252
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "confused",
+        "pose":  "confused",
+        "sourceMode":  "base",
+        "runtimeBytes":  156578,
+        "rigBytes":  162612
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "confused-blink",
+        "pose":  "confused",
+        "sourceMode":  "semantic-alias:confused",
+        "runtimeBytes":  156578,
+        "rigBytes":  162612
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "surprise",
+        "pose":  "surprise",
+        "sourceMode":  "base",
+        "runtimeBytes":  154000,
+        "rigBytes":  158318
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "surprise-blink",
+        "pose":  "surprise",
+        "sourceMode":  "semantic-alias:surprise",
+        "runtimeBytes":  154000,
+        "rigBytes":  158318
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "sadness",
+        "pose":  "sadness",
+        "sourceMode":  "base",
+        "runtimeBytes":  151112,
+        "rigBytes":  155302
+    },
+    {
+        "presentation":  "base-debug",
+        "frame":  "sadness-blink",
+        "pose":  "sadness",
+        "sourceMode":  "semantic-alias:sadness",
+        "runtimeBytes":  151112,
+        "rigBytes":  155302
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "neutral",
+        "pose":  "neutral",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167638,
+        "rigBytes":  174406
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "blink",
+        "pose":  "neutral",
+        "sourceMode":  "layered",
+        "runtimeBytes":  171904,
+        "rigBytes":  178564
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "joy",
+        "pose":  "joy",
+        "sourceMode":  "layered",
+        "runtimeBytes":  185532,
+        "rigBytes":  191524
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "joy-blink",
+        "pose":  "joy",
+        "sourceMode":  "layered",
+        "runtimeBytes":  180752,
+        "rigBytes":  187038
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "listening",
+        "pose":  "listening",
+        "sourceMode":  "layered",
+        "runtimeBytes":  178094,
+        "rigBytes":  184330
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "listening-blink",
+        "pose":  "listening",
+        "sourceMode":  "layered",
+        "runtimeBytes":  174386,
+        "rigBytes":  180454
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "thinking",
+        "pose":  "thinking",
+        "sourceMode":  "layered",
+        "runtimeBytes":  160748,
+        "rigBytes":  166894
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "thinking-blink",
+        "pose":  "thinking",
+        "sourceMode":  "layered",
+        "runtimeBytes":  164982,
+        "rigBytes":  171296
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "private-playful",
+        "pose":  "private-playful",
+        "sourceMode":  "layered",
+        "runtimeBytes":  185532,
+        "rigBytes":  191524
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "nod-down",
+        "pose":  "nod-down",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167638,
+        "rigBytes":  174406
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "shake-left",
+        "pose":  "shake-left",
+        "sourceMode":  "layered",
+        "runtimeBytes":  162804,
+        "rigBytes":  169176
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "shake-right",
+        "pose":  "shake-right",
+        "sourceMode":  "layered",
+        "runtimeBytes":  164594,
+        "rigBytes":  171000
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "wave",
+        "pose":  "wave",
+        "sourceMode":  "layered",
+        "runtimeBytes":  175784,
+        "rigBytes":  183234
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "explain-left",
+        "pose":  "explain-left",
+        "sourceMode":  "layered",
+        "runtimeBytes":  177552,
+        "rigBytes":  184766
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "explain-right",
+        "pose":  "explain-right",
+        "sourceMode":  "layered",
+        "runtimeBytes":  169246,
+        "rigBytes":  176124
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "celebrate",
+        "pose":  "celebrate",
+        "sourceMode":  "layered",
+        "runtimeBytes":  171364,
+        "rigBytes":  178616
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "concern",
+        "pose":  "concern",
+        "sourceMode":  "layered",
+        "runtimeBytes":  173242,
+        "rigBytes":  179332
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "concern-blink",
+        "pose":  "concern",
+        "sourceMode":  "layered",
+        "runtimeBytes":  173242,
+        "rigBytes":  179332
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "confused",
+        "pose":  "confused",
+        "sourceMode":  "layered",
+        "runtimeBytes":  177490,
+        "rigBytes":  184202
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "confused-blink",
+        "pose":  "confused",
+        "sourceMode":  "layered",
+        "runtimeBytes":  177490,
+        "rigBytes":  184202
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "surprise",
+        "pose":  "surprise",
+        "sourceMode":  "layered",
+        "runtimeBytes":  174230,
+        "rigBytes":  181782
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "surprise-blink",
+        "pose":  "surprise",
+        "sourceMode":  "layered",
+        "runtimeBytes":  174230,
+        "rigBytes":  181782
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "sadness",
+        "pose":  "sadness",
+        "sourceMode":  "layered",
+        "runtimeBytes":  165478,
+        "rigBytes":  172234
+    },
+    {
+        "presentation":  "hoodie",
+        "frame":  "sadness-blink",
+        "pose":  "sadness",
+        "sourceMode":  "layered",
+        "runtimeBytes":  165478,
+        "rigBytes":  172234
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "neutral",
+        "pose":  "neutral",
+        "sourceMode":  "layered",
+        "runtimeBytes":  162870,
+        "rigBytes":  167686
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "blink",
+        "pose":  "neutral",
+        "sourceMode":  "layered",
+        "runtimeBytes":  169162,
+        "rigBytes":  173806
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "joy",
+        "pose":  "joy",
+        "sourceMode":  "layered",
+        "runtimeBytes":  181476,
+        "rigBytes":  185668
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "joy-blink",
+        "pose":  "joy",
+        "sourceMode":  "layered",
+        "runtimeBytes":  174664,
+        "rigBytes":  178988
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "listening",
+        "pose":  "listening",
+        "sourceMode":  "layered",
+        "runtimeBytes":  174266,
+        "rigBytes":  178696
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "listening-blink",
+        "pose":  "listening",
+        "sourceMode":  "layered",
+        "runtimeBytes":  169670,
+        "rigBytes":  174332
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "thinking",
+        "pose":  "thinking",
+        "sourceMode":  "layered",
+        "runtimeBytes":  163032,
+        "rigBytes":  167322
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "thinking-blink",
+        "pose":  "thinking",
+        "sourceMode":  "layered",
+        "runtimeBytes":  168880,
+        "rigBytes":  173528
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "private-playful",
+        "pose":  "private-playful",
+        "sourceMode":  "layered",
+        "runtimeBytes":  181476,
+        "rigBytes":  185668
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "nod-down",
+        "pose":  "nod-down",
+        "sourceMode":  "layered",
+        "runtimeBytes":  162870,
+        "rigBytes":  167686
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "shake-left",
+        "pose":  "shake-left",
+        "sourceMode":  "layered",
+        "runtimeBytes":  158580,
+        "rigBytes":  163028
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "shake-right",
+        "pose":  "shake-right",
+        "sourceMode":  "layered",
+        "runtimeBytes":  156580,
+        "rigBytes":  160726
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "wave",
+        "pose":  "wave",
+        "sourceMode":  "layered",
+        "runtimeBytes":  178714,
+        "rigBytes":  184962
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "explain-left",
+        "pose":  "explain-left",
+        "sourceMode":  "layered",
+        "runtimeBytes":  177178,
+        "rigBytes":  183304
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "explain-right",
+        "pose":  "explain-right",
+        "sourceMode":  "layered",
+        "runtimeBytes":  171690,
+        "rigBytes":  177108
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "celebrate",
+        "pose":  "celebrate",
+        "sourceMode":  "layered",
+        "runtimeBytes":  173234,
+        "rigBytes":  181098
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "concern",
+        "pose":  "concern",
+        "sourceMode":  "layered",
+        "runtimeBytes":  175388,
+        "rigBytes":  180096
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "concern-blink",
+        "pose":  "concern",
+        "sourceMode":  "layered",
+        "runtimeBytes":  175388,
+        "rigBytes":  180096
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "confused",
+        "pose":  "confused",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167376,
+        "rigBytes":  174408
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "confused-blink",
+        "pose":  "confused",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167376,
+        "rigBytes":  174408
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "surprise",
+        "pose":  "surprise",
+        "sourceMode":  "layered",
+        "runtimeBytes":  166862,
+        "rigBytes":  171924
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "surprise-blink",
+        "pose":  "surprise",
+        "sourceMode":  "layered",
+        "runtimeBytes":  166862,
+        "rigBytes":  171924
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "sadness",
+        "pose":  "sadness",
+        "sourceMode":  "layered",
+        "runtimeBytes":  162916,
+        "rigBytes":  167086
+    },
+    {
+        "presentation":  "summer",
+        "frame":  "sadness-blink",
+        "pose":  "sadness",
+        "sourceMode":  "layered",
+        "runtimeBytes":  162916,
+        "rigBytes":  167086
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "neutral",
+        "pose":  "neutral",
+        "sourceMode":  "layered",
+        "runtimeBytes":  171464,
+        "rigBytes":  175826
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "blink",
+        "pose":  "neutral",
+        "sourceMode":  "layered",
+        "runtimeBytes":  178024,
+        "rigBytes":  182644
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "joy",
+        "pose":  "joy",
+        "sourceMode":  "layered",
+        "runtimeBytes":  188032,
+        "rigBytes":  192444
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "joy-blink",
+        "pose":  "joy",
+        "sourceMode":  "layered",
+        "runtimeBytes":  180206,
+        "rigBytes":  184452
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "listening",
+        "pose":  "listening",
+        "sourceMode":  "layered",
+        "runtimeBytes":  182094,
+        "rigBytes":  185734
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "listening-blink",
+        "pose":  "listening",
+        "sourceMode":  "layered",
+        "runtimeBytes":  177482,
+        "rigBytes":  181336
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "thinking",
+        "pose":  "thinking",
+        "sourceMode":  "layered",
+        "runtimeBytes":  161902,
+        "rigBytes":  166128
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "thinking-blink",
+        "pose":  "thinking",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167646,
+        "rigBytes":  172126
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "private-playful",
+        "pose":  "private-playful",
+        "sourceMode":  "layered",
+        "runtimeBytes":  188032,
+        "rigBytes":  192444
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "nod-down",
+        "pose":  "nod-down",
+        "sourceMode":  "layered",
+        "runtimeBytes":  171464,
+        "rigBytes":  175826
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "shake-left",
+        "pose":  "shake-left",
+        "sourceMode":  "layered",
+        "runtimeBytes":  153864,
+        "rigBytes":  158114
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "shake-right",
+        "pose":  "shake-right",
+        "sourceMode":  "layered",
+        "runtimeBytes":  148000,
+        "rigBytes":  152066
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "wave",
+        "pose":  "wave",
+        "sourceMode":  "layered",
+        "runtimeBytes":  164746,
+        "rigBytes":  170352
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "explain-left",
+        "pose":  "explain-left",
+        "sourceMode":  "layered",
+        "runtimeBytes":  178914,
+        "rigBytes":  184232
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "explain-right",
+        "pose":  "explain-right",
+        "sourceMode":  "layered",
+        "runtimeBytes":  159588,
+        "rigBytes":  164418
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "celebrate",
+        "pose":  "celebrate",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167182,
+        "rigBytes":  173236
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "concern",
+        "pose":  "concern",
+        "sourceMode":  "layered",
+        "runtimeBytes":  174918,
+        "rigBytes":  178690
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "concern-blink",
+        "pose":  "concern",
+        "sourceMode":  "layered",
+        "runtimeBytes":  174918,
+        "rigBytes":  178690
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "confused",
+        "pose":  "confused",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167374,
+        "rigBytes":  173172
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "confused-blink",
+        "pose":  "confused",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167374,
+        "rigBytes":  173172
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "surprise",
+        "pose":  "surprise",
+        "sourceMode":  "layered",
+        "runtimeBytes":  160706,
+        "rigBytes":  165200
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "surprise-blink",
+        "pose":  "surprise",
+        "sourceMode":  "layered",
+        "runtimeBytes":  160706,
+        "rigBytes":  165200
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "sadness",
+        "pose":  "sadness",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167290,
+        "rigBytes":  171432
+    },
+    {
+        "presentation":  "gym",
+        "frame":  "sadness-blink",
+        "pose":  "sadness",
+        "sourceMode":  "layered",
+        "runtimeBytes":  167290,
+        "rigBytes":  171432
+    }
+]

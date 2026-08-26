@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type RefObject, type SyntheticEvent } from "react";
 import {
   getAvatarRigFrameSource,
   type AvatarFrameId,
@@ -15,14 +15,14 @@ import {
   type IdleBeat,
   type RigMotionInput,
 } from "../domain/avatarPointRig";
-import type { AvatarOutfitId, AvatarState, GestureId } from "../domain/types";
+import type { AvatarPresentationId, AvatarState, GestureId } from "../domain/types";
 import { easeFrameTransition } from "../domain/avatarTransitions";
 
 interface PointRigCanvasProps {
   currentFrame: AvatarFrameId;
-  currentOutfit: AvatarOutfitId;
+  currentOutfit: AvatarPresentationId;
   previousFrame: AvatarFrameId | null;
-  previousOutfit: AvatarOutfitId | null;
+  previousOutfit: AvatarPresentationId | null;
   transitionDurationMs: number;
   transitionRevision: number;
   state: AvatarState;
@@ -43,6 +43,7 @@ const MESH_COLUMNS = 24;
 const MESH_ROWS = 36;
 const MAX_DEVICE_PIXEL_RATIO = 2;
 const ZERO_ATTENTION: AttentionVector = { x: 0, y: 0 };
+const SAFE_FALLBACK_SOURCE = getAvatarRigFrameSource("hoodie", "neutral");
 
 const vertexShaderSource = `
   attribute vec2 a_position;
@@ -72,19 +73,27 @@ const fragmentShaderSource = `
 
 const imagePromises = new Map<string, Promise<HTMLImageElement>>();
 
-function textureKey(outfit: AvatarOutfitId, frame: AvatarFrameId): string {
+function textureKey(outfit: AvatarPresentationId, frame: AvatarFrameId): string {
   return `${outfit}:${frame}`;
 }
 
-function loadFrameImage(outfit: AvatarOutfitId, frame: AvatarFrameId): Promise<HTMLImageElement> {
+function loadFrameImage(outfit: AvatarPresentationId, frame: AvatarFrameId): Promise<HTMLImageElement> {
   const key = textureKey(outfit, frame);
   const cached = imagePromises.get(key);
   if (cached) return cached;
   const promise = new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
+    let attemptedSafeFallback = false;
     image.decoding = "async";
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Не удалось загрузить кадр ${outfit}:${frame}`));
+    image.onerror = () => {
+      if (!attemptedSafeFallback) {
+        attemptedSafeFallback = true;
+        image.src = SAFE_FALLBACK_SOURCE;
+        return;
+      }
+      reject(new Error(`Не удалось загрузить кадр ${outfit}:${frame} и безопасный fallback`));
+    };
     image.src = getAvatarRigFrameSource(outfit, frame);
   });
   imagePromises.set(key, promise);
@@ -93,6 +102,16 @@ function loadFrameImage(outfit: AvatarOutfitId, frame: AvatarFrameId): Promise<H
     () => imagePromises.delete(key),
   );
   return promise;
+}
+
+function handleFallbackImageError(event: SyntheticEvent<HTMLImageElement>): void {
+  const image = event.currentTarget;
+  if (image.dataset.safeFallback === "true") {
+    image.hidden = true;
+    return;
+  }
+  image.dataset.safeFallback = "true";
+  image.src = SAFE_FALLBACK_SOURCE;
 }
 
 function compileShader(gl: WebGLRenderingContext, type: number, source: string): WebGLShader {
@@ -213,7 +232,7 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
       renderer.dataset.residentOutfit = residentOutfit;
     };
 
-    const ensureTexture = async (outfit: AvatarOutfitId, frame: AvatarFrameId) => {
+    const ensureTexture = async (outfit: AvatarPresentationId, frame: AvatarFrameId) => {
       const key = textureKey(outfit, frame);
       if (textures.has(key)) return;
       const inFlight = textureLoads.get(key);
@@ -233,7 +252,7 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
       return task;
     };
 
-    const releaseInactiveOutfits = (activeOutfit: AvatarOutfitId) => {
+    const releaseInactiveOutfits = (activeOutfit: AvatarPresentationId) => {
       for (const [key, texture] of textures) {
         if (!key.startsWith(`${activeOutfit}:`)) {
           gl.deleteTexture(texture);
@@ -293,18 +312,20 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
           const displayKey = textureKey(currentProps.currentOutfit, currentProps.currentFrame);
           if (!textures.has(displayKey) && pendingDisplayKey !== displayKey) {
             pendingDisplayKey = displayKey;
-            setReady(false);
             void ensureTexture(currentProps.currentOutfit, currentProps.currentFrame).then(() => {
               if (stopped || contextLost) return;
               const latest = propsRef.current;
+              if (pendingDisplayKey === displayKey) pendingDisplayKey = null;
               if (textureKey(latest.currentOutfit, latest.currentFrame) === displayKey) {
-                pendingDisplayKey = null;
                 setReady(true);
                 latest.onRendererChange?.("point-rig-webgl");
               }
             }).catch(() => {
-              pendingDisplayKey = null;
-              propsRef.current.onRendererChange?.("frame-fallback");
+              if (pendingDisplayKey === displayKey) pendingDisplayKey = null;
+              if (textures.size === 0) {
+                setReady(false);
+                propsRef.current.onRendererChange?.("frame-fallback");
+              }
             });
           }
           const outfitTransitionActive = currentProps.previousFrame !== null
@@ -420,6 +441,7 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
           key={`previous-${props.transitionRevision}`}
           className="point-rig-fallback point-rig-fallback-previous"
           src={getAvatarRigFrameSource(props.previousOutfit ?? props.currentOutfit, props.previousFrame)}
+          onError={handleFallbackImageError}
           alt=""
           draggable={false}
         />
@@ -428,6 +450,7 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
         key={`current-${props.currentOutfit}-${props.currentFrame}-${props.transitionRevision}`}
         className={`point-rig-fallback point-rig-fallback-current ${props.previousFrame ? "is-transitioning" : ""}`}
         src={getAvatarRigFrameSource(props.currentOutfit, props.currentFrame)}
+        onError={handleFallbackImageError}
         alt=""
         draggable={false}
       />

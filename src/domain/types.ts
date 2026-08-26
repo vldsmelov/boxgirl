@@ -26,6 +26,8 @@ export type GestureId = (typeof GESTURE_IDS)[number];
 export type VoiceStyle = (typeof VOICE_STYLES)[number];
 export type AvatarState = "idle" | "listening" | "thinking" | "speaking" | "error";
 export type AvatarOutfitId = "hoodie" | "summer" | "gym";
+/** Renderable appearance. The debug base is intentionally not an outfit and is never model-controlled. */
+export type AvatarPresentationId = AvatarOutfitId | "base-debug";
 
 export interface PerformanceSegment {
   text: string;

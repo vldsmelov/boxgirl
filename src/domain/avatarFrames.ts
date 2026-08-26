@@ -1,4 +1,4 @@
-import type { AvatarOutfitId, AvatarState, EmotionId, GestureId } from "./types";
+import type { AvatarOutfitId, AvatarPresentationId, AvatarState, EmotionId, GestureId } from "./types";
 
 export const AVATAR_FRAME_IDS = [
   "neutral",
@@ -30,19 +30,21 @@ export const AVATAR_FRAME_IDS = [
 export type AvatarFrameId = (typeof AVATAR_FRAME_IDS)[number];
 
 export const AVATAR_OUTFIT_IDS = ["hoodie", "summer", "gym"] as const satisfies readonly AvatarOutfitId[];
+export const AVATAR_PRESENTATION_IDS = [...AVATAR_OUTFIT_IDS, "base-debug"] as const satisfies readonly AvatarPresentationId[];
 
-const outfitAssetRoots: Record<AvatarOutfitId, string> = {
-  hoodie: "/assets/avatar-v2",
-  summer: "/assets/avatar-v3-summer",
-  gym: "/assets/avatar-v4-gym",
+const presentationAssetRoots: Record<AvatarPresentationId, string> = {
+  hoodie: "/assets/avatar-layered-v1/hoodie",
+  summer: "/assets/avatar-layered-v1/summer",
+  gym: "/assets/avatar-layered-v1/gym",
+  "base-debug": "/assets/avatar-layered-v1/base-debug",
 };
 
-export function getAvatarFrameSource(outfit: AvatarOutfitId, frame: AvatarFrameId): string {
-  return `${outfitAssetRoots[outfit]}/webp/${frame}.webp`;
+export function getAvatarFrameSource(presentation: AvatarPresentationId, frame: AvatarFrameId): string {
+  return `${presentationAssetRoots[presentation]}/webp/${frame}.webp`;
 }
 
-export function getAvatarRigFrameSource(outfit: AvatarOutfitId, frame: AvatarFrameId): string {
-  return `${outfitAssetRoots[outfit]}/webp-rig/${frame}.webp`;
+export function getAvatarRigFrameSource(presentation: AvatarPresentationId, frame: AvatarFrameId): string {
+  return `${presentationAssetRoots[presentation]}/webp-rig/${frame}.webp`;
 }
 
 const gestureFrames: Partial<Record<GestureId, AvatarFrameId>> = {
