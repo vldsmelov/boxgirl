@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isPrivateEasterEggCommand } from "./privateEasterEgg";
+import { isPrivateEasterEggAltCommand, isPrivateEasterEggCommand } from "./privateEasterEgg";
 import { GESTURE_IDS } from "./types";
 
 describe("private easter egg command", () => {
@@ -14,5 +14,13 @@ describe("private easter egg command", () => {
   it("is not available to AssistantTurnV1 providers", () => {
     expect(GESTURE_IDS).not.toContain("boink");
     expect(GESTURE_IDS).not.toContain("easter_egg");
+  });
+
+  it.each(["боньк2", " БОНЬК2 ", "БоНьК2"])('accepts the exact legacy mannequin command %s', (value) => {
+    expect(isPrivateEasterEggAltCommand(value)).toBe(true);
+  });
+
+  it.each(["боньк2!", "скажи боньк2", "боньк 2", "боньк22", ""])('rejects broad legacy command matches for %s', (value) => {
+    expect(isPrivateEasterEggAltCommand(value)).toBe(false);
   });
 });

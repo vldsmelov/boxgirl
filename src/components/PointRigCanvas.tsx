@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type RefObject, type SyntheticEvent } from "react";
 import {
   getAvatarRigFrameSource,
   type AvatarFrameId,
@@ -15,14 +15,14 @@ import {
   type IdleBeat,
   type RigMotionInput,
 } from "../domain/avatarPointRig";
-import type { AvatarOutfitId, AvatarState, GestureId } from "../domain/types";
+import type { AvatarPresentationId, AvatarState, GestureId } from "../domain/types";
 import { easeFrameTransition } from "../domain/avatarTransitions";
 
 interface PointRigCanvasProps {
   currentFrame: AvatarFrameId;
-  currentOutfit: AvatarOutfitId;
+  currentPresentation: AvatarPresentationId;
   previousFrame: AvatarFrameId | null;
-  previousOutfit: AvatarOutfitId | null;
+  previousPresentation: AvatarPresentationId | null;
   transitionDurationMs: number;
   transitionRevision: number;
   state: AvatarState;
@@ -43,6 +43,7 @@ const MESH_COLUMNS = 24;
 const MESH_ROWS = 36;
 const MAX_DEVICE_PIXEL_RATIO = 2;
 const ZERO_ATTENTION: AttentionVector = { x: 0, y: 0 };
+const SAFE_FALLBACK_SOURCE = getAvatarRigFrameSource("hoodie", "neutral");
 
 const vertexShaderSource = `
   attribute vec2 a_position;
@@ -72,20 +73,28 @@ const fragmentShaderSource = `
 
 const imagePromises = new Map<string, Promise<HTMLImageElement>>();
 
-function textureKey(outfit: AvatarOutfitId, frame: AvatarFrameId): string {
-  return `${outfit}:${frame}`;
+function textureKey(presentation: AvatarPresentationId, frame: AvatarFrameId): string {
+  return `${presentation}:${frame}`;
 }
 
-function loadFrameImage(outfit: AvatarOutfitId, frame: AvatarFrameId): Promise<HTMLImageElement> {
-  const key = textureKey(outfit, frame);
+function loadFrameImage(presentation: AvatarPresentationId, frame: AvatarFrameId): Promise<HTMLImageElement> {
+  const key = textureKey(presentation, frame);
   const cached = imagePromises.get(key);
   if (cached) return cached;
   const promise = new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
+    let attemptedSafeFallback = false;
     image.decoding = "async";
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Не удалось загрузить кадр ${outfit}:${frame}`));
-    image.src = getAvatarRigFrameSource(outfit, frame);
+    image.onerror = () => {
+      if (!attemptedSafeFallback) {
+        attemptedSafeFallback = true;
+        image.src = SAFE_FALLBACK_SOURCE;
+        return;
+      }
+      reject(new Error(`Не удалось загрузить кадр ${presentation}:${frame} и безопасный fallback`));
+    };
+    image.src = getAvatarRigFrameSource(presentation, frame);
   });
   imagePromises.set(key, promise);
   void promise.then(
@@ -93,6 +102,16 @@ function loadFrameImage(outfit: AvatarOutfitId, frame: AvatarFrameId): Promise<H
     () => imagePromises.delete(key),
   );
   return promise;
+}
+
+function handleFallbackImageError(event: SyntheticEvent<HTMLImageElement>): void {
+  const image = event.currentTarget;
+  if (image.dataset.safeFallback === "true") {
+    image.hidden = true;
+    return;
+  }
+  image.dataset.safeFallback = "true";
+  image.src = SAFE_FALLBACK_SOURCE;
 }
 
 function compileShader(gl: WebGLRenderingContext, type: number, source: string): WebGLShader {
@@ -199,7 +218,7 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
     const indices = createMeshIndices(MESH_COLUMNS, MESH_ROWS);
     const textures = new Map<string, WebGLTexture>();
     const textureLoads = new Map<string, Promise<void>>();
-    let residentOutfit = propsRef.current.currentOutfit;
+    let residentPresentation = propsRef.current.currentPresentation;
     let pendingDisplayKey: string | null = null;
     let program: WebGLProgram | null = null;
     let vertexBuffer: WebGLBuffer | null = null;
@@ -210,16 +229,17 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
       const renderer = canvas.parentElement;
       if (!renderer) return;
       renderer.dataset.textureCount = String(textures.size);
-      renderer.dataset.residentOutfit = residentOutfit;
+      renderer.dataset.residentOutfit = residentPresentation;
+      renderer.dataset.residentPresentation = residentPresentation;
     };
 
-    const ensureTexture = async (outfit: AvatarOutfitId, frame: AvatarFrameId) => {
-      const key = textureKey(outfit, frame);
+    const ensureTexture = async (presentation: AvatarPresentationId, frame: AvatarFrameId) => {
+      const key = textureKey(presentation, frame);
       if (textures.has(key)) return;
       const inFlight = textureLoads.get(key);
       if (inFlight) return inFlight;
       const task = (async () => {
-        const image = await loadFrameImage(outfit, frame);
+        const image = await loadFrameImage(presentation, frame);
         if (!stopped && !contextLost && !textures.has(key)) {
           textures.set(key, createTexture(gl, image));
           updateTextureDiagnostics();
@@ -233,14 +253,14 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
       return task;
     };
 
-    const releaseInactiveOutfits = (activeOutfit: AvatarOutfitId) => {
+    const releaseInactivePresentations = (activePresentation: AvatarPresentationId) => {
       for (const [key, texture] of textures) {
-        if (!key.startsWith(`${activeOutfit}:`)) {
+        if (!key.startsWith(`${activePresentation}:`)) {
           gl.deleteTexture(texture);
           textures.delete(key);
         }
       }
-      residentOutfit = activeOutfit;
+      residentPresentation = activePresentation;
       updateTextureDiagnostics();
     };
 
@@ -281,8 +301,8 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
         gl.disable(gl.CULL_FACE);
 
         const currentFrame = propsRef.current.currentFrame;
-        const currentOutfit = propsRef.current.currentOutfit;
-        await ensureTexture(currentOutfit, currentFrame);
+        const currentPresentation = propsRef.current.currentPresentation;
+        await ensureTexture(currentPresentation, currentFrame);
         if (stopped || contextLost) return;
         setReady(true);
         propsRef.current.onRendererChange?.("point-rig-webgl");
@@ -290,28 +310,30 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
         const render = (now: number) => {
           if (stopped || contextLost || !program || !vertexBuffer) return;
           const currentProps = propsRef.current;
-          const displayKey = textureKey(currentProps.currentOutfit, currentProps.currentFrame);
+          const displayKey = textureKey(currentProps.currentPresentation, currentProps.currentFrame);
           if (!textures.has(displayKey) && pendingDisplayKey !== displayKey) {
             pendingDisplayKey = displayKey;
-            setReady(false);
-            void ensureTexture(currentProps.currentOutfit, currentProps.currentFrame).then(() => {
+            void ensureTexture(currentProps.currentPresentation, currentProps.currentFrame).then(() => {
               if (stopped || contextLost) return;
               const latest = propsRef.current;
-              if (textureKey(latest.currentOutfit, latest.currentFrame) === displayKey) {
-                pendingDisplayKey = null;
+              if (pendingDisplayKey === displayKey) pendingDisplayKey = null;
+              if (textureKey(latest.currentPresentation, latest.currentFrame) === displayKey) {
                 setReady(true);
                 latest.onRendererChange?.("point-rig-webgl");
               }
             }).catch(() => {
-              pendingDisplayKey = null;
-              propsRef.current.onRendererChange?.("frame-fallback");
+              if (pendingDisplayKey === displayKey) pendingDisplayKey = null;
+              if (textures.size === 0) {
+                setReady(false);
+                propsRef.current.onRendererChange?.("frame-fallback");
+              }
             });
           }
-          const outfitTransitionActive = currentProps.previousFrame !== null
-            && currentProps.previousOutfit !== null
-            && currentProps.previousOutfit !== currentProps.currentOutfit;
-          if (!outfitTransitionActive && currentProps.currentOutfit !== residentOutfit) {
-            releaseInactiveOutfits(currentProps.currentOutfit);
+          const presentationTransitionActive = currentProps.previousFrame !== null
+            && currentProps.previousPresentation !== null
+            && currentProps.previousPresentation !== currentProps.currentPresentation;
+          if (!presentationTransitionActive && currentProps.currentPresentation !== residentPresentation) {
+            releaseInactivePresentations(currentProps.currentPresentation);
           }
           if (currentProps.transitionRevision !== lastTransitionRevision) {
             lastTransitionRevision = currentProps.transitionRevision;
@@ -360,9 +382,9 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
 
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
-          const currentTexture = textures.get(textureKey(currentProps.currentOutfit, currentProps.currentFrame));
-          const previousTexture = currentProps.previousFrame && currentProps.previousOutfit
-            ? textures.get(textureKey(currentProps.previousOutfit, currentProps.previousFrame))
+          const currentTexture = textures.get(textureKey(currentProps.currentPresentation, currentProps.currentFrame));
+          const previousTexture = currentProps.previousFrame && currentProps.previousPresentation
+            ? textures.get(textureKey(currentProps.previousPresentation, currentProps.previousFrame))
             : currentTexture;
           if (currentTexture) {
             gl.activeTexture(gl.TEXTURE0);
@@ -409,9 +431,11 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
       data-renderer={ready ? "point-rig-webgl" : "frame-fallback"}
       data-transitioning={props.previousFrame ? "true" : "false"}
       data-current-frame={props.currentFrame}
-      data-current-outfit={props.currentOutfit}
+      data-current-outfit={props.currentPresentation}
+      data-current-presentation={props.currentPresentation}
       data-previous-frame={props.previousFrame ?? ""}
-      data-previous-outfit={props.previousOutfit ?? ""}
+      data-previous-outfit={props.previousPresentation ?? ""}
+      data-previous-presentation={props.previousPresentation ?? ""}
       data-transition-duration={props.transitionDurationMs}
       style={{ "--frame-transition-ms": `${props.transitionDurationMs}ms` } as CSSProperties}
     >
@@ -419,15 +443,17 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
         <img
           key={`previous-${props.transitionRevision}`}
           className="point-rig-fallback point-rig-fallback-previous"
-          src={getAvatarRigFrameSource(props.previousOutfit ?? props.currentOutfit, props.previousFrame)}
+          src={getAvatarRigFrameSource(props.previousPresentation ?? props.currentPresentation, props.previousFrame)}
+          onError={handleFallbackImageError}
           alt=""
           draggable={false}
         />
       )}
       <img
-        key={`current-${props.currentOutfit}-${props.currentFrame}-${props.transitionRevision}`}
+        key={`current-${props.currentPresentation}-${props.currentFrame}-${props.transitionRevision}`}
         className={`point-rig-fallback point-rig-fallback-current ${props.previousFrame ? "is-transitioning" : ""}`}
-        src={getAvatarRigFrameSource(props.currentOutfit, props.currentFrame)}
+        src={getAvatarRigFrameSource(props.currentPresentation, props.currentFrame)}
+        onError={handleFallbackImageError}
         alt=""
         draggable={false}
       />

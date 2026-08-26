@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { canUseBlinkFrame, resolveAvatarFrame, resolveBlinkFrame } from "./avatarFrames";
+import {
+  AVATAR_OUTFIT_IDS,
+  AVATAR_PRESENTATION_IDS,
+  canUseBlinkFrame,
+  getAvatarFrameSource,
+  getAvatarRigFrameSource,
+  resolveAvatarFrame,
+  resolveBlinkFrame,
+} from "./avatarFrames";
 
 describe("curated avatar frame resolver", () => {
   it("prioritizes hard states over stale model gestures", () => {
@@ -28,5 +36,18 @@ describe("curated avatar frame resolver", () => {
     expect(resolveBlinkFrame("confused", "error")).toBe("confused-blink");
     expect(canUseBlinkFrame("concern", "speaking")).toBe(true);
     expect(canUseBlinkFrame("wave", "speaking")).toBe(false);
+  });
+
+  it("uses independent full-frame outfit sets including the authored bonk pose", () => {
+    expect(AVATAR_OUTFIT_IDS).toEqual(["hoodie", "summer", "gym"]);
+    expect(AVATAR_PRESENTATION_IDS).toEqual(["hoodie", "summer", "gym", "base-debug"]);
+    expect(getAvatarFrameSource("hoodie", "neutral")).toBe("/assets/avatar-v2/webp/neutral.webp");
+    expect(getAvatarFrameSource("summer", "wave")).toBe("/assets/avatar-v3-summer/webp/wave.webp");
+    expect(getAvatarRigFrameSource("gym", "private-playful"))
+      .toBe("/assets/avatar-v4-gym/webp-rig/private-playful.webp");
+    expect(getAvatarRigFrameSource("base-debug", "private-playful"))
+      .toBe("/assets/avatar-layered-v1/base-debug/webp-rig/private-playful.webp");
+    expect(getAvatarRigFrameSource("base-debug", "private-playful-alt"))
+      .toBe("/assets/avatar-layered-v1/base-debug/webp-rig/private-playful-alt.webp");
   });
 });

@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "presentationId": "base-debug",
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "masterDirectory": "../../../../art/boxgirl-base-v1/masters",
+  "runtimeDirectory": "webp",
+  "pointRigDirectory": "webp-rig",
+  "safeFallback": {
+    "presentation": "hoodie",
+    "frame": "neutral"
+  },
+  "semanticFrames": [
+    "neutral",
+    "blink",
+    "joy",
+    "joy-blink",
+    "listening",
+    "listening-blink",
+    "thinking",
+    "thinking-blink",
+    "private-playful",
+    "private-playful-alt",
+    "nod-down",
+    "shake-left",
+    "shake-right",
+    "wave",
+    "explain-left",
+    "explain-right",
+    "celebrate",
+    "concern",
+    "concern-blink",
+    "confused",
+    "confused-blink",
+    "surprise",
+    "surprise-blink",
+    "sadness",
+    "sadness-blink"
+  ],
+  "commands": {
+    "toggle": "отладка",
+    "correctedBonk": "боньк",
+    "legacyBonk": "боньк2"
+  }
+}

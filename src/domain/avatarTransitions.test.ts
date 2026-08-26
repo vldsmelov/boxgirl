@@ -13,6 +13,9 @@ describe("avatar frame transitions", () => {
     expect(getFrameTransitionDurationMs("neutral", "private-playful")).toBe(
       FRAME_TRANSITION_DURATIONS_MS.privatePose,
     );
+    expect(getFrameTransitionDurationMs("neutral", "private-playful-alt")).toBe(
+      FRAME_TRANSITION_DURATIONS_MS.privatePose,
+    );
   });
 
   it("uses shorter dedicated windows for blinks and authored head keys", () => {

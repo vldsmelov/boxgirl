@@ -93,6 +93,23 @@ if ($rigFiles.Count -ne $manifestFrameCount) {
   $failures.Add("Point-rig frame count $($rigFiles.Count) does not match manifest count $manifestFrameCount")
 }
 
+$privateRuntimePath = Join-Path $runtimeRoot $manifest.frames.'private-playful'.file
+$joyRuntimePath = Join-Path $runtimeRoot $manifest.frames.joy.file
+$privateRigPath = Join-Path $rigRoot "private-playful.webp"
+$joyRigPath = Join-Path $rigRoot "joy.webp"
+if (
+  (Get-FileHash -LiteralPath $privateRuntimePath -Algorithm SHA256).Hash -eq
+  (Get-FileHash -LiteralPath $joyRuntimePath -Algorithm SHA256).Hash
+) {
+  $failures.Add("private-playful runtime frame is an alias of joy; bonk requires authored full-frame art")
+}
+if (
+  (Get-FileHash -LiteralPath $privateRigPath -Algorithm SHA256).Hash -eq
+  (Get-FileHash -LiteralPath $joyRigPath -Algorithm SHA256).Hash
+) {
+  $failures.Add("private-playful point-rig frame is an alias of joy; bonk requires authored full-frame art")
+}
+
 $rows | Format-Table -AutoSize
 Write-Host "Avatar runtime: $($runtimeFiles.Count) frames, $([math]::Round(($runtimeFiles | Measure-Object Length -Sum).Sum / 1MB, 2)) MB"
 Write-Host "Point-rig runtime: $($rigFiles.Count) transparent frames, $([math]::Round(($rigFiles | Measure-Object Length -Sum).Sum / 1MB, 2)) MB"

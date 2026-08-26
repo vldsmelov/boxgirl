@@ -19,7 +19,9 @@ export function getFrameTransitionKind(from: AvatarFrameId, to: AvatarFrameId): 
 }
 
 export function getFrameTransitionDurationMs(from: AvatarFrameId, to: AvatarFrameId): number {
-  if (from === "private-playful" || to === "private-playful") return FRAME_TRANSITION_DURATIONS_MS.privatePose;
+  if (from.startsWith("private-playful") || to.startsWith("private-playful")) {
+    return FRAME_TRANSITION_DURATIONS_MS.privatePose;
+  }
   return FRAME_TRANSITION_DURATIONS_MS[getFrameTransitionKind(from, to)];
 }
 
