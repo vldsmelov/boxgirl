@@ -13,7 +13,7 @@ Runtime сочетает цельные визуально проверенны�
 - восемь blink-пар для длительных состояний и эмоций.
 - приватная игривая поза используется только локальным UI-эффектом и не зарегистрирована как эмоция или жест модели.
 
-Мастера худи находятся в `art/boxgirl-v2/masters`, летнего outfit — в `art/boxgirl-v3-summer/masters`, спортивного — в `art/boxgirl-v4-gym/masters`. Соответствующие runtime-наборы лежат в `public/assets/avatar-*`. Команды `npm run build:rig-assets`, `build:summer-assets` и `build:gym-assets` воспроизводимо создают прозрачные cutout-кадры; фон сцены остаётся неподвижным.
+Мастера всех семи outfit находятся в `art/boxgirl-*/masters`, включая `boxgirl-v6-hacker`, `boxgirl-v7-office` и `boxgirl-v8-sleep`. Соответствующие runtime-наборы лежат в `public/assets/avatar-*`. Команды `npm run build:*‑assets` воспроизводимо создают прозрачные cutout-кадры; фон сцены остаётся неподвижным.
 
 Для экономии памяти на 4-GB GPU WebGL держит полный texture-набор только текущего outfit. Новый набор лениво загружается во время 640-мс crossfade, старые GPU-текстуры удаляются после завершения перехода. Декодированные `HTMLImageElement` не удерживаются глобальным кешем.
 
@@ -75,7 +75,7 @@ Animation lab открывается кнопкой с иконкой жука �
 
 ## Контроль качества
 
-`npm run qa:avatar`, `qa:summer-outfit`, `qa:gym-outfit` и `qa:evening-outfit` проверяют manifest, PNG-мастера, runtime/point-rig WebP, размер 1024×1536, прозрачность и PSNR не ниже 42 dB. `npm run qa:outfit-switch` проверяет все четыре outfit, переход 640 мс, persistence и приватную анимацию в вечернем образе. Математика сетки, пружин, безопасных лимитов и временных ключей покрыта unit-тестами.
+`npm run qa:avatar` и команды `qa:*‑outfit` проверяют manifest, PNG-мастера, runtime/point-rig WebP, размер 1024×1536, прозрачность и PSNR не ниже 42 dB. `npm run qa:outfit-switch` проверяет все семь outfit, переход 640 мс, persistence, лимит четырёх текстур и приватную анимацию в ночном образе. Математика сетки, пружин, безопасных лимитов и временных ключей покрыта unit-тестами.
 
 ## Переход на Live2D
 

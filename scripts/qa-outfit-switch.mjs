@@ -61,6 +61,41 @@ async function submit(text) {
   })()`);
 }
 
+async function switchAndCapture(commandText, outfitId, screenshotName) {
+  await submit(commandText);
+  await waitFor(
+    `document.querySelector('.point-rig-renderer')?.dataset.currentOutfit === ${JSON.stringify(outfitId)}`,
+    3_000,
+    `${outfitId} outfit`,
+  );
+  const transition = await evaluate(`(() => {
+    const renderer = document.querySelector('.point-rig-renderer');
+    return {
+      currentOutfit: renderer?.dataset.currentOutfit,
+      previousOutfit: renderer?.dataset.previousOutfit,
+      durationMs: Number(renderer?.dataset.transitionDuration),
+    };
+  })()`);
+  await new Promise((resolve) => setTimeout(resolve, 850));
+  await evaluate(`document.querySelector('button[aria-label="Диагностика"]')?.click()`);
+  await waitFor(`document.querySelector('.debug-panel') !== null`, 1_000, `open diagnostics panel for ${outfitId}`);
+  const state = await evaluate(`(() => ({
+    outfit: document.querySelector('[data-testid="avatar"]')?.dataset.outfit,
+    rendererOutfit: document.querySelector('.point-rig-renderer')?.dataset.currentOutfit,
+    storedOutfit: localStorage.getItem('boxgirl.avatar-outfit.v1'),
+    assistantText: [...document.querySelectorAll('.message-assistant p')].at(-1)?.textContent?.trim(),
+    renderer: document.querySelector('.point-rig-renderer')?.dataset.renderer,
+    fps: [...document.querySelectorAll('.debug-panel dt')].find((item) => item.textContent === 'render')?.parentElement?.querySelector('dd')?.textContent,
+    textureCount: Number(document.querySelector('.point-rig-renderer')?.dataset.textureCount),
+    residentOutfit: document.querySelector('.point-rig-renderer')?.dataset.residentOutfit,
+  }))()`);
+  await evaluate(`document.querySelector('button[aria-label="Диагностика"]')?.click()`);
+  await waitFor(`document.querySelector('.debug-panel') === null`, 1_000, `close diagnostics panel for ${outfitId}`);
+  const screenshot = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+  await writeFile(new URL(screenshotName, outputDir), Buffer.from(screenshot.data, "base64"));
+  return { transition, state };
+}
+
 await command("Page.enable");
 await waitFor(
   `document.querySelector('#root') !== null && typeof window.__TAURI_INTERNALS__?.invoke === 'function'`,
@@ -156,8 +191,12 @@ await waitFor(`document.querySelector('.debug-panel') === null`, 1_000, "closed 
 const eveningScreenshot = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
 await writeFile(new URL("evening-outfit.png", outputDir), Buffer.from(eveningScreenshot.data, "base64"));
 
+const hacker = await switchAndCapture("хакер", "hacker", "hacker-outfit.png");
+const office = await switchAndCapture("офис", "office", "office-outfit.png");
+const sleep = await switchAndCapture("сон", "sleep", "sleep-outfit.png");
+
 await submit("боньк");
-await waitFor(`document.querySelector('[data-testid="avatar"]')?.dataset.frame === 'private-playful'`, 3_000, "evening bonk pose");
+await waitFor(`document.querySelector('[data-testid="avatar"]')?.dataset.frame === 'private-playful'`, 3_000, "sleep bonk pose");
 const bonkOutfit = await evaluate(`document.querySelector('[data-testid="avatar"]')?.dataset.outfit`);
 
 await submit("холодно");
@@ -201,12 +240,48 @@ const valid = transition.currentOutfit === "summer"
   && evening.textureCount > 0
   && evening.textureCount <= 4
   && evening.residentOutfit === "evening"
-  && bonkOutfit === "evening"
+  && hacker.transition.currentOutfit === "hacker"
+  && hacker.transition.previousOutfit === "evening"
+  && hacker.transition.durationMs === 640
+  && hacker.state.outfit === "hacker"
+  && hacker.state.rendererOutfit === "hacker"
+  && hacker.state.storedOutfit === "hacker"
+  && hacker.state.assistantText?.includes("Хакерский")
+  && hacker.state.renderer === "point-rig-webgl"
+  && Number.parseInt(hacker.state.fps, 10) >= 55
+  && hacker.state.textureCount > 0
+  && hacker.state.textureCount <= 4
+  && hacker.state.residentOutfit === "hacker"
+  && office.transition.currentOutfit === "office"
+  && office.transition.previousOutfit === "hacker"
+  && office.transition.durationMs === 640
+  && office.state.outfit === "office"
+  && office.state.rendererOutfit === "office"
+  && office.state.storedOutfit === "office"
+  && office.state.assistantText?.includes("Офисный")
+  && office.state.renderer === "point-rig-webgl"
+  && Number.parseInt(office.state.fps, 10) >= 55
+  && office.state.textureCount > 0
+  && office.state.textureCount <= 4
+  && office.state.residentOutfit === "office"
+  && sleep.transition.currentOutfit === "sleep"
+  && sleep.transition.previousOutfit === "office"
+  && sleep.transition.durationMs === 640
+  && sleep.state.outfit === "sleep"
+  && sleep.state.rendererOutfit === "sleep"
+  && sleep.state.storedOutfit === "sleep"
+  && sleep.state.assistantText?.includes("Ночной режим")
+  && sleep.state.renderer === "point-rig-webgl"
+  && Number.parseInt(sleep.state.fps, 10) >= 55
+  && sleep.state.textureCount > 0
+  && sleep.state.textureCount <= 4
+  && sleep.state.residentOutfit === "sleep"
+  && bonkOutfit === "sleep"
   && cold.outfit === "hoodie"
   && cold.storedOutfit === "hoodie"
   && cold.assistantText?.includes("худи");
 
-const result = { valid, transition, summer, gymTransition, gym, eveningTransition, evening, bonkOutfit, cold };
+const result = { valid, transition, summer, gymTransition, gym, eveningTransition, evening, hacker, office, sleep, bonkOutfit, cold };
 await writeFile(new URL("results.json", outputDir), JSON.stringify(result, null, 2), "utf8");
 console.log(JSON.stringify(result, null, 2));
 socket.close();

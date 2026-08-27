@@ -65,6 +65,9 @@ const previewOutfit: AvatarOutfitId | null = previewOutfitValue === "hoodie"
   || previewOutfitValue === "summer"
   || previewOutfitValue === "gym"
   || previewOutfitValue === "evening"
+  || previewOutfitValue === "hacker"
+  || previewOutfitValue === "office"
+  || previewOutfitValue === "sleep"
   ? previewOutfitValue
   : null;
 
@@ -75,6 +78,37 @@ const welcomeMessage: ChatMessage = {
   role: "assistant",
   text: "Привет! Я BoxGirl. Моя локальная модель готовится к работе — можешь спросить меня о чём-нибудь.",
   createdAt: Date.now(),
+};
+
+const outfitReplies: Record<AvatarOutfitId, { changed: string; unchanged: string }> = {
+  hoodie: {
+    changed: "Стало прохладно? Возвращаюсь в уютную худи.",
+    unchanged: "Я уже в тёплой худи — всё хорошо.",
+  },
+  summer: {
+    changed: "Фух, так гораздо легче. Переоделась в летнюю майку с кроликом 🐰",
+    unchanged: "Я уже в летнем образе — кролик на месте 🐰",
+  },
+  gym: {
+    changed: "Тренировка? Я готова. Переоделась — давай сделаем этот подход вместе 💪",
+    unchanged: "Я уже в спортивной форме. Начинаем подход? 💪",
+  },
+  evening: {
+    changed: "Вечерний образ готов. Изумрудный атлас, высокая укладка — можно выходить ✨",
+    unchanged: "Я уже в вечернем образе — украшения и укладка на месте ✨",
+  },
+  hacker: {
+    changed: "Хакерский образ загружен. Канал защищён, настроение — немного опасное 💻",
+    unchanged: "Я уже в хакерском образе. Защита активна, хвост собран 💻",
+  },
+  office: {
+    changed: "Офисный образ готов. Очки на месте, аргументы тоже 📎",
+    unchanged: "Я уже в офисном образе — собрана и убедительна 📎",
+  },
+  sleep: {
+    changed: "Ночной режим. Пеньюар, маска и никаких срочных задач 🌙",
+    unchanged: "Я уже в ночном образе. Осталось только выключить уведомления 🌙",
+  },
 };
 
 export default function App() {
@@ -279,21 +313,7 @@ export default function App() {
     stopCurrentTurn("speaking");
     const changed = baseDebugVisible || outfit !== nextOutfit;
     const now = Date.now();
-    const reply = nextOutfit === "evening"
-      ? changed
-        ? "Вечерний образ готов. Изумрудный атлас, высокая укладка — можно выходить ✨"
-        : "Я уже в вечернем образе — украшения и укладка на месте ✨"
-      : nextOutfit === "summer"
-      ? changed
-        ? "Фух, так гораздо легче. Переоделась в летнюю майку с кроликом 🐰"
-        : "Я уже в летнем образе — кролик на месте 🐰"
-      : nextOutfit === "gym"
-        ? changed
-          ? "Тренировка? Я готова. Переоделась — давай сделаем этот подход вместе 💪"
-          : "Я уже в спортивной форме. Начинаем подход? 💪"
-        : changed
-          ? "Стало прохладно? Возвращаюсь в уютную худи."
-          : "Я уже в тёплой худи — всё хорошо.";
+    const reply = changed ? outfitReplies[nextOutfit].changed : outfitReplies[nextOutfit].unchanged;
     setMessages((current) => [
       ...current,
       { id: makeId(), role: "user", text, createdAt: now },

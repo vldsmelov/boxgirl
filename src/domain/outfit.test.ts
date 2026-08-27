@@ -18,7 +18,19 @@ describe("local outfit commands", () => {
     expect(resolveOutfitCommand(value)).toBe("evening");
   });
 
-  it.each(["мне жарко", "очень холодно", "план тренировки", "добрый вечер", "вечером", "вечер?", "тренировка?", "жарковато", "жарко?", ""])("does not intercept normal chat text %s", (value) => {
+  it.each(["хакер", " ХАКЕР ", "Хакер!", "хакер."])("selects the hacker outfit for %s", (value) => {
+    expect(resolveOutfitCommand(value)).toBe("hacker");
+  });
+
+  it.each(["офис", " ОФИС ", "Офис!", "офис."])("selects the office outfit for %s", (value) => {
+    expect(resolveOutfitCommand(value)).toBe("office");
+  });
+
+  it.each(["сон", " СОН ", "Сон!", "сон."])("selects the sleep outfit for %s", (value) => {
+    expect(resolveOutfitCommand(value)).toBe("sleep");
+  });
+
+  it.each(["мне жарко", "очень холодно", "план тренировки", "добрый вечер", "вечером", "вечер?", "тренировка?", "хакер?", "офисный", "иду в офис", "пора спать", "сон?", "жарковато", "жарко?", ""])("does not intercept normal chat text %s", (value) => {
     expect(resolveOutfitCommand(value)).toBeNull();
   });
 
@@ -31,6 +43,12 @@ describe("local outfit commands", () => {
     expect(loadOutfitPreference()).toBe("gym");
     saveOutfitPreference("evening");
     expect(loadOutfitPreference()).toBe("evening");
+    saveOutfitPreference("hacker");
+    expect(loadOutfitPreference()).toBe("hacker");
+    saveOutfitPreference("office");
+    expect(loadOutfitPreference()).toBe("office");
+    saveOutfitPreference("sleep");
+    expect(loadOutfitPreference()).toBe("sleep");
     saveOutfitPreference("hoodie");
     expect(loadOutfitPreference()).toBe("hoodie");
   });

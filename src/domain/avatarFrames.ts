@@ -30,7 +30,7 @@ export const AVATAR_FRAME_IDS = [
 
 export type AvatarFrameId = (typeof AVATAR_FRAME_IDS)[number];
 
-export const AVATAR_OUTFIT_IDS = ["hoodie", "summer", "gym", "evening"] as const satisfies readonly AvatarOutfitId[];
+export const AVATAR_OUTFIT_IDS = ["hoodie", "summer", "gym", "evening", "hacker", "office", "sleep"] as const satisfies readonly AvatarOutfitId[];
 export const AVATAR_PRESENTATION_IDS = [...AVATAR_OUTFIT_IDS, "base-debug"] as const satisfies readonly AvatarPresentationId[];
 
 const presentationAssetRoots: Record<AvatarPresentationId, string> = {
@@ -38,6 +38,9 @@ const presentationAssetRoots: Record<AvatarPresentationId, string> = {
   summer: "/assets/avatar-v3-summer",
   gym: "/assets/avatar-v4-gym",
   evening: "/assets/avatar-v5-evening",
+  hacker: "/assets/avatar-v6-hacker",
+  office: "/assets/avatar-v7-office",
+  sleep: "/assets/avatar-v8-sleep",
   "base-debug": "/assets/avatar-layered-v1/base-debug",
 };
 

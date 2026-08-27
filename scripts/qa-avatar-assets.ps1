@@ -39,6 +39,18 @@ foreach ($property in $manifest.frames.PSObject.Properties) {
     continue
   }
 
+  if (
+    $manifest.PSObject.Properties.Name -contains "alphaExtraction" -and
+    $manifest.alphaExtraction.PSObject.Properties.Name -contains "sourceAlphaRequired" -and
+    [bool]$manifest.alphaExtraction.sourceAlphaRequired
+  ) {
+    $masterChannels = [string](& magick identify -format "%[channels]" $masterPath)
+    $masterOpaque = [string](& magick identify -format "%[opaque]" $masterPath)
+    if ($masterChannels -notmatch "a" -or $masterOpaque -ne "False") {
+      $failures.Add("$frameId master must provide authored transparent RGBA")
+    }
+  }
+
   $dimensions = [string](& magick identify -format "%wx%h" $runtimePath)
   $previousErrorPreference = $ErrorActionPreference
   $ErrorActionPreference = "Continue"
