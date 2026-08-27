@@ -32,4 +32,4 @@ Blink-компаньоны создавались из соответствую�
 
 ## Runtime alpha
 
-Для всех трёх образов фон удалён отдельным identity-preserving edit: сервис возвращал либо настоящий alpha, либо нейтральную checkerboard-подложку. `scripts/normalize-imagegen-avatar-alpha.ps1` приводит оба варианта к проверенному RGBA-мастеру, а manifest требует `sourceAlphaRequired`. Поэтому тёмная одежда, тонкие волосы, очки и маска не зависят от runtime color-key, сборка не может незаметно вырезать детали, а приложение по-прежнему загружает только готовые прозрачные WebP.
+Для всех трёх образов фон удалён отдельным identity-preserving edit: сервис возвращал либо настоящий alpha, либо нейтральную checkerboard-подложку. `scripts/normalize-imagegen-avatar-alpha.ps1` приводит оба варианта к проверенному RGBA-мастеру, восстанавливает светлые внутренние детали лица, которые могут быть ошибочно приняты за checkerboard (зубы и блики), а manifest требует `sourceAlphaRequired`. Поэтому тёмная одежда, тонкие волосы, очки, маска и лицо не зависят от runtime color-key; отдельный `faceFeatureAlphaProtection` gate блокирует регрессию до сборки приложения.

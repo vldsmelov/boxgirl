@@ -73,6 +73,43 @@ foreach ($inputFrame in $inputFrames) {
     }
   }
 
+  # Bright neutral teeth and eye highlights can resemble the generated
+  # checkerboard. Rebuild a conservative foreground-protection mask from warm
+  # skin pixels, close only small internal facial gaps, and union it with the
+  # authored alpha. This restores enclosed details without filling the open
+  # spaces between hair strands or the external backdrop.
+  $skinProtectionPath = Join-Path $outputRoot ".$($inputFrame.BaseName)-skin-protection.png"
+  $authoredAlphaPath = Join-Path $outputRoot ".$($inputFrame.BaseName)-authored-alpha.png"
+  $repairedAlphaPath = Join-Path $outputRoot ".$($inputFrame.BaseName)-repaired-alpha.png"
+  $repairedOutputPath = Join-Path $outputRoot ".$($inputFrame.BaseName)-repaired.png"
+  try {
+    & magick $inputFrame.FullName -alpha off `
+      -fx "(r>0.68 && r>g*1.025 && g>b*1.025 && (r-b)>0.10)?1:0" `
+      -morphology Close "Disk:10" `
+      -morphology Open "Disk:1" `
+      $skinProtectionPath
+    if ($LASTEXITCODE -ne 0) { throw "Failed to build facial alpha protection for $($inputFrame.Name)" }
+
+    & magick $outputPath -alpha extract $authoredAlphaPath
+    if ($LASTEXITCODE -ne 0) { throw "Failed to extract authored alpha for $($inputFrame.Name)" }
+
+    & magick $authoredAlphaPath $skinProtectionPath -evaluate-sequence max $repairedAlphaPath
+    if ($LASTEXITCODE -ne 0) { throw "Failed to repair facial alpha for $($inputFrame.Name)" }
+
+    & magick $outputPath $repairedAlphaPath `
+      -alpha off -compose CopyOpacity -composite `
+      $repairedOutputPath
+    if ($LASTEXITCODE -ne 0) { throw "Failed to apply repaired facial alpha for $($inputFrame.Name)" }
+
+    Move-Item -LiteralPath $repairedOutputPath -Destination $outputPath -Force
+  }
+  finally {
+    Remove-Item -LiteralPath $skinProtectionPath -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $authoredAlphaPath -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $repairedAlphaPath -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $repairedOutputPath -Force -ErrorAction SilentlyContinue
+  }
+
   $outputOpaque = [string](& magick identify -format "%[opaque]" $outputPath)
   $cornerAlpha = [double]::Parse(
     [string](& magick $outputPath -format "%[fx:p{0,0}.a]" info:),

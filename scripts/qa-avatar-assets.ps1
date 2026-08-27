@@ -95,6 +95,38 @@ foreach ($property in $manifest.frames.PSObject.Properties) {
       $failures.Add("$frameId point-rig opaque probe mean alpha is $([math]::Round($probeMeanAlpha, 4)); expected >= $($opaqueProbe.minimumMeanAlpha)")
     }
   }
+  if (
+    $manifest.qualityGates.PSObject.Properties.Name -contains "faceFeatureAlphaProtection" -and
+    [bool]$manifest.qualityGates.faceFeatureAlphaProtection
+  ) {
+    $faceProtectionPath = Join-Path $rigRoot ".$frameId-face-protection.png"
+    $rigAlphaPath = Join-Path $rigRoot ".$frameId-rig-alpha.png"
+    try {
+      & magick $masterPath -alpha off `
+        -fx "(r>0.68 && r>g*1.025 && g>b*1.025 && (r-b)>0.10)?1:0" `
+        -morphology Close "Disk:10" `
+        -morphology Open "Disk:1" `
+        $faceProtectionPath
+      if ($LASTEXITCODE -ne 0) { throw "Failed to build facial QA mask: $frameId" }
+
+      & magick $rigPath -alpha extract $rigAlphaPath
+      if ($LASTEXITCODE -ne 0) { throw "Failed to extract point-rig alpha for facial QA: $frameId" }
+
+      $missingFaceAlpha = [double]::Parse(
+        [string](& magick $faceProtectionPath $rigAlphaPath `
+          -fx "(u>0.5 && v<0.95)?1:0" `
+          -format "%[fx:maxima]" info:),
+        [Globalization.CultureInfo]::InvariantCulture
+      )
+      if ($missingFaceAlpha -gt 0) {
+        $failures.Add("$frameId point-rig alpha removed a protected facial detail (teeth, eyes or skin highlight)")
+      }
+    }
+    finally {
+      Remove-Item -LiteralPath $faceProtectionPath -Force -ErrorAction SilentlyContinue
+      Remove-Item -LiteralPath $rigAlphaPath -Force -ErrorAction SilentlyContinue
+    }
+  }
 
   $rows += [PSCustomObject]@{
     Frame = $frameId

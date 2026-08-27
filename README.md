@@ -66,7 +66,7 @@ cd src-tauri
 cargo check
 ```
 
-Если identity-preserving edit возвращает визуальную checkerboard-подложку вместо настоящего alpha, `scripts/normalize-imagegen-avatar-alpha.ps1` детерминированно создаёт RGBA-мастер и проверяет холст, прозрачный угол и непрозрачный центр. Для hacker/office сборка принимает только такие authored-alpha мастера.
+Если identity-preserving edit возвращает визуальную checkerboard-подложку вместо настоящего alpha, `scripts/normalize-imagegen-avatar-alpha.ps1` детерминированно создаёт RGBA-мастер, восстанавливает защищённые детали лица (включая зубы и блики глаз) и проверяет холст, прозрачный угол и непрозрачный центр. Для hacker/office/sleep сборка принимает только такие authored-alpha мастера; asset-QA отдельно блокирует потерю facial alpha.
 
 ## Локальный русский ASR
 

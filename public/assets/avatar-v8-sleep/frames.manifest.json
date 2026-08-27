@@ -50,6 +50,7 @@
     "dimensionsMatch": true,
     "noAlphaExtraction": true,
     "noClipMaskBodyParts": true,
+    "faceFeatureAlphaProtection": true,
     "runtimePsnrMinimumDb": 42,
     "opaqueProbe": { "geometry": "160x500+432+1000", "minimumMeanAlpha": 0.989 },
     "preloadAllFrames": true
