@@ -18,6 +18,7 @@ interface AvatarStageProps {
   emotionIntensity: number;
   gesture: GestureId;
   gestureRevision: number;
+  frameOverride?: AvatarFrameId | null;
   easterEggActive: boolean;
   easterEggFrame: Extract<AvatarFrameId, "private-playful" | "private-playful-alt">;
   easterEggRevision: number;
@@ -151,9 +152,9 @@ function useFrameTransition(targetFrame: AvatarFrameId, targetPresentation: Avat
   return transition;
 }
 
-export function AvatarStage({ state, presentation, emotion, emotionIntensity, gesture, gestureRevision, easterEggActive, easterEggFrame, easterEggRevision, lipLevel, partialTranscript, onRendererChange }: AvatarStageProps) {
+export function AvatarStage({ state, presentation, emotion, emotionIntensity, gesture, gestureRevision, frameOverride, easterEggActive, easterEggFrame, easterEggRevision, lipLevel, partialTranscript, onRendererChange }: AvatarStageProps) {
   const living = useLivingAvatar(state, gesture);
-  const baseFrame: AvatarFrameId = easterEggActive ? easterEggFrame : resolveAvatarFrame(state, emotion, gesture);
+  const baseFrame: AvatarFrameId = easterEggActive ? easterEggFrame : frameOverride ?? resolveAvatarFrame(state, emotion, gesture);
   const semanticFrame = useAuthoredHeadMotion(baseFrame, state, gesture, gestureRevision);
   const blinkFrame = resolveBlinkFrame(semanticFrame, state);
   const targetFrame = living.blink && blinkFrame ? blinkFrame : semanticFrame;

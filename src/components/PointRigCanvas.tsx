@@ -44,6 +44,23 @@ const MESH_ROWS = 36;
 const MAX_DEVICE_PIXEL_RATIO = 2;
 const ZERO_ATTENTION: AttentionVector = { x: 0, y: 0 };
 const SAFE_FALLBACK_SOURCE = getAvatarRigFrameSource("hoodie", "neutral");
+export const MAX_RESIDENT_TEXTURES = 4;
+
+export function selectTextureEvictions(
+  keys: readonly string[],
+  protectedKeys: ReadonlySet<string>,
+  maximum = MAX_RESIDENT_TEXTURES,
+): string[] {
+  const evictions: string[] = [];
+  let remaining = keys.length;
+  for (const key of keys) {
+    if (remaining <= maximum) break;
+    if (protectedKeys.has(key)) continue;
+    evictions.push(key);
+    remaining -= 1;
+  }
+  return evictions;
+}
 
 const vertexShaderSource = `
   attribute vec2 a_position;
@@ -233,6 +250,21 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
       renderer.dataset.residentPresentation = residentPresentation;
     };
 
+    const trimTextureCache = () => {
+      const latest = propsRef.current;
+      const protectedKeys = new Set<string>([
+        textureKey(latest.currentPresentation, latest.currentFrame),
+      ]);
+      if (latest.previousFrame && latest.previousPresentation) {
+        protectedKeys.add(textureKey(latest.previousPresentation, latest.previousFrame));
+      }
+      for (const key of selectTextureEvictions([...textures.keys()], protectedKeys)) {
+        const texture = textures.get(key);
+        if (texture) gl.deleteTexture(texture);
+        textures.delete(key);
+      }
+    };
+
     const ensureTexture = async (presentation: AvatarPresentationId, frame: AvatarFrameId) => {
       const key = textureKey(presentation, frame);
       if (textures.has(key)) return;
@@ -242,6 +274,7 @@ export function PointRigCanvas(props: PointRigCanvasProps) {
         const image = await loadFrameImage(presentation, frame);
         if (!stopped && !contextLost && !textures.has(key)) {
           textures.set(key, createTexture(gl, image));
+          trimTextureCache();
           updateTextureDiagnostics();
         }
       })();

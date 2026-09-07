@@ -26,6 +26,7 @@
     "qa:base-mannequin": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-base-mannequin-assets.ps1",
     "qa:base-debug": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-base-debug.ps1",
     "qa:outfit-switch": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-outfit-switch.ps1",
+    "qa:alarm": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-alarm.ps1",
     "qa:voices": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-voice-comparison.ps1",
     "qa:silero-worker": "models\\silero\\.venv\\Scripts\\python.exe scripts/smoke_silero_worker.py --python models\\silero\\.venv\\Scripts\\python.exe --model models\\silero\\v5_5_ru.pt --worker scripts\\silero_worker.py",
     "qa:release-tts": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/qa-release-tts.ps1",

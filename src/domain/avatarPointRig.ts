@@ -186,6 +186,10 @@ const RIG_TRANSFORM_FIELDS: ReadonlyArray<keyof RigTransform> = ["x", "y", "rota
 function canonicalFrame(frame: AvatarFrameId): AvatarFrameId {
   if (frame.endsWith("-blink")) return frame.slice(0, -6) as AvatarFrameId;
   if (frame === "nod-down" || frame.startsWith("shake-")) return "neutral";
+  if (frame === "alarm-soft") return "listening";
+  if (frame === "alarm-teasing") return "joy";
+  if (frame === "alarm-firm") return "explain-right";
+  if (frame === "alarm-pout") return "concern";
   return frame;
 }
 

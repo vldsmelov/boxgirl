@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { AvatarStage } from "./components/AvatarStage";
 import type { AvatarFrameId } from "./domain/avatarFrames";
+import { ALARM_OUTFIT_SETTLE_MS, ALARM_SCRIPT, isAlarmCommand, waitForAlarmDelay } from "./domain/alarm";
 import { GESTURE_TIMINGS } from "./domain/avatarPointRig";
 import { isBaseDebugCommand } from "./domain/baseDebug";
 import { loadOutfitPreference, resolveOutfitCommand, saveOutfitPreference } from "./domain/outfit";
@@ -127,6 +128,7 @@ export default function App() {
   const [emotionIntensity, setEmotionIntensity] = useState(initialPreview ? 0.72 : 0.35);
   const [gesture, setGesture] = useState<GestureId>(initialPreview?.gesture ?? "none");
   const [gestureRevision, setGestureRevision] = useState(initialPreview?.gesture === "none" || !initialPreview ? 0 : 1);
+  const [authoredFrame, setAuthoredFrame] = useState<AvatarFrameId | null>(null);
   const [easterEggActive, setEasterEggActive] = useState(false);
   const [easterEggFrame, setEasterEggFrame] = useState<Extract<AvatarFrameId, "private-playful" | "private-playful-alt">>("private-playful");
   const [easterEggRevision, setEasterEggRevision] = useState(0);
@@ -223,6 +225,7 @@ export default function App() {
     speech.cancel();
     setLipLevel(0);
     setGesture("none");
+    setAuthoredFrame(null);
     setEasterEggActive(false);
     setEasterEggFrame("private-playful");
     setPresentationOverride(null);
@@ -349,6 +352,69 @@ export default function App() {
     setBaseDebugVisible(nextVisible);
   };
 
+  const triggerAlarm = async (text: string) => {
+    stopCurrentTurn("speaking");
+    const controller = new AbortController();
+    activeTurn.current = controller;
+    const now = Date.now();
+    setMessages((current) => [
+      ...current,
+      { id: makeId(), role: "user", text, createdAt: now },
+      {
+        id: makeId(),
+        role: "assistant",
+        text: ALARM_SCRIPT.map((cue) => cue.text).join(" "),
+        createdAt: now + 1,
+      },
+    ]);
+    setInput("");
+    setBaseDebugVisible(false);
+    setPresentationOverride(null);
+    setOutfit("sleep");
+    saveOutfitPreference("sleep");
+    setAvatarState("speaking");
+    setGesture("none");
+    setAuthoredFrame(ALARM_SCRIPT[0].frame);
+    setEmotion(ALARM_SCRIPT[0].emotion);
+    setEmotionIntensity(ALARM_SCRIPT[0].intensity);
+
+    try {
+      await waitForAlarmDelay(ALARM_OUTFIT_SETTLE_MS, controller.signal);
+      for (const cue of ALARM_SCRIPT) {
+        if (controller.signal.aborted || activeTurn.current !== controller) return;
+        setAvatarState("speaking");
+        setGesture("none");
+        setAuthoredFrame(cue.frame);
+        setEmotion(cue.emotion);
+        setEmotionIntensity(cue.intensity);
+        await speech.speak(cue.text, cue.voiceStyle, controller.signal, setLipLevel, {
+          profile: "silero-baya",
+          delivery: cue.delivery,
+        });
+        setTtsFallback(speech.getLastFallbackReason());
+        await waitForAlarmDelay(cue.pauseAfterMs, controller.signal);
+      }
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setTtsFallback(error instanceof Error ? error.message : String(error));
+        setMessages((current) => [
+          ...current,
+          { id: makeId(), role: "system", text: "Не удалось воспроизвести сцену пробуждения. Проверь аудиоустройство.", createdAt: Date.now() },
+        ]);
+      }
+    } finally {
+      if (activeTurn.current === controller) {
+        activeTurn.current = null;
+        setAuthoredFrame(null);
+        setGesture("none");
+        setEmotion("neutral");
+        setEmotionIntensity(0.35);
+        setLipLevel(0);
+        setAvatarState("idle");
+      }
+    }
+  };
+
   const runTurn = async (rawInput: string) => {
     const text = rawInput.trim();
     if (!text) return;
@@ -430,6 +496,10 @@ export default function App() {
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (isAlarmCommand(input)) {
+      void triggerAlarm(input.trim());
+      return;
+    }
     if (isBaseDebugCommand(input)) {
       triggerBaseDebugCommand(input.trim());
       return;
@@ -519,6 +589,7 @@ export default function App() {
           emotionIntensity={emotionIntensity}
           gesture={gesture}
           gestureRevision={gestureRevision}
+          frameOverride={authoredFrame}
           easterEggActive={easterEggActive}
           easterEggFrame={easterEggFrame}
           easterEggRevision={easterEggRevision}

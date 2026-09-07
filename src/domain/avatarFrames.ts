@@ -26,6 +26,14 @@ export const AVATAR_FRAME_IDS = [
   "surprise-blink",
   "sadness",
   "sadness-blink",
+  "alarm-soft",
+  "alarm-soft-blink",
+  "alarm-teasing",
+  "alarm-teasing-blink",
+  "alarm-firm",
+  "alarm-firm-blink",
+  "alarm-pout",
+  "alarm-pout-blink",
 ] as const;
 
 export type AvatarFrameId = (typeof AVATAR_FRAME_IDS)[number];
@@ -87,6 +95,10 @@ export function resolveBlinkFrame(frame: AvatarFrameId, state: AvatarState): Ava
   if (frame === "sadness" && state === "speaking") return "sadness-blink";
   if (frame === "surprise" && state === "speaking") return "surprise-blink";
   if (frame === "confused" && (state === "speaking" || state === "error")) return "confused-blink";
+  if (frame === "alarm-soft" && state === "speaking") return "alarm-soft-blink";
+  if (frame === "alarm-teasing" && state === "speaking") return "alarm-teasing-blink";
+  if (frame === "alarm-firm" && state === "speaking") return "alarm-firm-blink";
+  if (frame === "alarm-pout" && state === "speaking") return "alarm-pout-blink";
   return null;
 }
 

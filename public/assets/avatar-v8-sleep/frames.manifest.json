@@ -43,7 +43,15 @@
     "surprise": { "file": "webp/surprise.webp", "role": "emotion" },
     "surprise-blink": { "file": "webp/surprise-blink.webp", "role": "emotion-keyframe" },
     "sadness": { "file": "webp/sadness.webp", "role": "emotion" },
-    "sadness-blink": { "file": "webp/sadness-blink.webp", "role": "emotion-keyframe" }
+    "sadness-blink": { "file": "webp/sadness-blink.webp", "role": "emotion-keyframe" },
+    "alarm-soft": { "file": "webp/alarm-soft.webp", "role": "alarm-scene" },
+    "alarm-soft-blink": { "file": "webp/alarm-soft-blink.webp", "role": "alarm-scene-keyframe" },
+    "alarm-teasing": { "file": "webp/alarm-teasing.webp", "role": "alarm-scene" },
+    "alarm-teasing-blink": { "file": "webp/alarm-teasing-blink.webp", "role": "alarm-scene-keyframe" },
+    "alarm-firm": { "file": "webp/alarm-firm.webp", "role": "alarm-scene" },
+    "alarm-firm-blink": { "file": "webp/alarm-firm-blink.webp", "role": "alarm-scene-keyframe" },
+    "alarm-pout": { "file": "webp/alarm-pout.webp", "role": "alarm-scene" },
+    "alarm-pout-blink": { "file": "webp/alarm-pout-blink.webp", "role": "alarm-scene-keyframe" }
   },
   "selectionPriority": ["error", "listening", "thinking", "gesture", "emotion", "neutral"],
   "qualityGates": {

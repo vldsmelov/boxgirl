@@ -10,6 +10,8 @@ __pycache__/
 .pytest_cache/
 .venv/
 .tmp/
+.codex-qa/
+art/boxgirl-v9-alarm/
 *.log
 .DS_Store
 Thumbs.db

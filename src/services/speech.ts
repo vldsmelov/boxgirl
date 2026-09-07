@@ -36,7 +36,19 @@ interface SpeechProvider {
     style: VoiceStyle,
     signal: AbortSignal,
     onLipLevel: (level: number) => void,
+    delivery?: SpeechDeliveryOverride,
   ): Promise<void>;
+}
+
+export interface SpeechDeliveryOverride {
+  rate?: number;
+  pitch?: number;
+  gain?: number;
+}
+
+export interface SpeechOptions {
+  profile?: VoiceProfileId;
+  delivery?: SpeechDeliveryOverride;
 }
 
 export const VOICE_PROFILES: readonly VoiceProfile[] = [
@@ -130,6 +142,15 @@ export function voiceStyleSettings(style: VoiceStyle): { rate: number; pitch: nu
   }
 }
 
+export function resolveSpeechSettings(style: VoiceStyle, delivery?: SpeechDeliveryOverride): { rate: number; pitch: number; gain: number } {
+  const defaults = voiceStyleSettings(style);
+  return {
+    rate: delivery?.rate ?? defaults.rate,
+    pitch: delivery?.pitch ?? defaults.pitch,
+    gain: delivery?.gain ?? defaults.gain,
+  };
+}
+
 class WindowsSpeechProvider implements SpeechProvider {
   private generation = 0;
 
@@ -143,6 +164,7 @@ class WindowsSpeechProvider implements SpeechProvider {
     style: VoiceStyle,
     signal: AbortSignal,
     onLipLevel: (level: number) => void,
+    delivery?: SpeechDeliveryOverride,
   ): Promise<void> {
     const generation = ++this.generation;
     if (signal.aborted) throw abortError();
@@ -157,7 +179,7 @@ class WindowsSpeechProvider implements SpeechProvider {
     const voice = russian.find((item) =>
       WINDOWS_VOICE_HINTS.some((hint) => item.name.toLowerCase().includes(hint)),
     ) ?? russian[0];
-    const settings = voiceStyleSettings(style);
+    const settings = resolveSpeechSettings(style, delivery);
 
     await new Promise<void>((resolve, reject) => {
       const utterance = new SpeechSynthesisUtterance(text);
@@ -269,6 +291,7 @@ class SileroSpeechProvider implements SpeechProvider {
     style: VoiceStyle,
     signal: AbortSignal,
     onLipLevel: (level: number) => void,
+    delivery?: SpeechDeliveryOverride,
   ): Promise<void> {
     if (!tauriAvailable()) throw new Error("Silero доступен только в desktop-сборке");
     const generation = ++this.generation;
@@ -286,7 +309,7 @@ class SileroSpeechProvider implements SpeechProvider {
     const wav = decodeBase64(synthesis.wavBase64);
     const audio = await this.context.decodeAudioData(wav.buffer.slice(0));
     if (signal.aborted || generation !== this.generation) throw abortError();
-    const settings = voiceStyleSettings(style);
+    const settings = resolveSpeechSettings(style, delivery);
 
     await new Promise<void>((resolve, reject) => {
       const source = this.context!.createBufferSource();
@@ -300,6 +323,7 @@ class SileroSpeechProvider implements SpeechProvider {
 
       source.buffer = audio;
       source.playbackRate.value = settings.rate;
+      source.detune.value = 1_200 * Math.log2(settings.pitch);
       gain.gain.value = settings.gain;
       source.connect(gain);
       gain.connect(analyser);
@@ -389,11 +413,13 @@ export class LocalSpeechOutput {
     style: VoiceStyle,
     signal: AbortSignal,
     onLipLevel: (level: number) => void,
+    options: SpeechOptions = {},
   ): Promise<void> {
-    const profile = VOICE_PROFILES.find((item) => item.id === this.profile) ?? VOICE_PROFILES[0];
+    const requestedProfile = options.profile ?? this.profile;
+    const profile = VOICE_PROFILES.find((item) => item.id === requestedProfile) ?? VOICE_PROFILES[0];
     this.lastFallbackReason = null;
     if (profile.engine === "windows" || !profile.speaker) {
-      await this.windows.speak(text, style, signal, onLipLevel);
+      await this.windows.speak(text, style, signal, onLipLevel, options.delivery);
       return;
     }
 
@@ -403,11 +429,11 @@ export class LocalSpeechOutput {
       this.silero.set(profile.speaker, provider);
     }
     try {
-      await provider.speak(text, style, signal, onLipLevel);
+      await provider.speak(text, style, signal, onLipLevel, options.delivery);
     } catch (error) {
       if (isAbortError(error) || signal.aborted) throw abortError();
       this.lastFallbackReason = error instanceof Error ? error.message : String(error);
-      await this.windows.speak(text, style, signal, onLipLevel);
+      await this.windows.speak(text, style, signal, onLipLevel, options.delivery);
     }
   }
 }

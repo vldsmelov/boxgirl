@@ -34,6 +34,10 @@ describe("curated avatar frame resolver", () => {
     expect(resolveBlinkFrame("sadness", "speaking")).toBe("sadness-blink");
     expect(resolveBlinkFrame("surprise", "speaking")).toBe("surprise-blink");
     expect(resolveBlinkFrame("confused", "error")).toBe("confused-blink");
+    expect(resolveBlinkFrame("alarm-soft", "speaking")).toBe("alarm-soft-blink");
+    expect(resolveBlinkFrame("alarm-teasing", "speaking")).toBe("alarm-teasing-blink");
+    expect(resolveBlinkFrame("alarm-firm", "speaking")).toBe("alarm-firm-blink");
+    expect(resolveBlinkFrame("alarm-pout", "speaking")).toBe("alarm-pout-blink");
     expect(canUseBlinkFrame("concern", "speaking")).toBe(true);
     expect(canUseBlinkFrame("wave", "speaking")).toBe(false);
   });
